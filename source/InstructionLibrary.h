@@ -1,0 +1,63 @@
+#pragma once
+#include "hardware/InstLib.h"
+#include "Config.h"
+
+class InstructionLibrary{
+  public:
+  InstructionLibrary()=default;
+
+  Config::inst_lib_t& CreateInstLib(Config::hardware_t& hardware, emp::Random& random){
+    inst_lib = Config::inst_lib_t();
+    InitializeDefault();
+    InitializeCustom(hardware, random);
+    return inst_lib;
+  }
+
+  private:
+    void InitializeDefault(){
+    inst_lib.AddInst("Inc", Config::hardware_t::Inst_Inc, 1, "Increment value in local memory Arg1");
+    inst_lib.AddInst("Dec", Config::hardware_t::Inst_Dec, 1, "Decrement value in local memory Arg1");
+    inst_lib.AddInst("Not", Config::hardware_t::Inst_Not, 1, "Logically toggle value in local memory Arg1");
+    inst_lib.AddInst("Add", Config::hardware_t::Inst_Add, 3, "Local memory: Arg3 = Arg1 + Arg2");
+    inst_lib.AddInst("Sub", Config::hardware_t::Inst_Sub, 3, "Local memory: Arg3 = Arg1 - Arg2");
+    inst_lib.AddInst("Mult", Config::hardware_t::Inst_Mult, 3, "Local memory: Arg3 = Arg1 * Arg2");
+    inst_lib.AddInst("Div", Config::hardware_t::Inst_Div, 3, "Local memory: Arg3 = Arg1 / Arg2");
+    inst_lib.AddInst("Mod", Config::hardware_t::Inst_Mod, 3, "Local memory: Arg3 = Arg1 % Arg2");
+    inst_lib.AddInst("TestEqu", Config::hardware_t::Inst_TestEqu, 3, "Local memory: Arg3 = (Arg1 == Arg2)");
+    inst_lib.AddInst("TestNEqu", Config::hardware_t::Inst_TestNEqu, 3, "Local memory: Arg3 = (Arg1 != Arg2)");
+    inst_lib.AddInst("TestLess", Config::hardware_t::Inst_TestLess, 3, "Local memory: Arg3 = (Arg1 < Arg2)");
+    inst_lib.AddInst("If", Config::hardware_t::Inst_If, 1, "Local memory: If Arg1 != 0, proceed; else, skip block.", emp::ScopeType::BASIC, 0, {"block_def"});
+    inst_lib.AddInst("While", Config::hardware_t::Inst_While, 1, "If (Local[Arg1] != 0) { execute block } else { skip block }");
+    inst_lib.AddInst("Countdown", Config::hardware_t::Inst_Countdown, 1, "Local memory: Countdown Arg1 to zero.", emp::ScopeType::BASIC, 0, {"block_def"});
+    inst_lib.AddInst("Close", Config::hardware_t::Inst_Close, 0, "Close current block if there is a block to close.", emp::ScopeType::BASIC, 0, {"block_close"});
+    inst_lib.AddInst("Break", Config::hardware_t::Inst_Break, 0, "Break out of current block.");
+    inst_lib.AddInst("Call", Config::hardware_t::Inst_Call, 0, "Call function that best matches call affinity.", emp::ScopeType::BASIC, 0, {"affinity"});
+    inst_lib.AddInst("Return", Config::hardware_t::Inst_Return, 0, "Return from current function if possible.");
+    inst_lib.AddInst("SetMem", Config::hardware_t::Inst_SetMem, 2, "Local memory: Arg1 = numerical value of Arg2");
+    inst_lib.AddInst("CopyMem", Config::hardware_t::Inst_CopyMem, 2, "Local memory: Arg1 = Arg2");
+    inst_lib.AddInst("SwapMem", Config::hardware_t::Inst_SwapMem, 2, "Local memory: Swap values of Arg1 and Arg2.");
+    inst_lib.AddInst("Input", Config::hardware_t::Inst_Input, 2, "Input memory Arg1 => Local memory Arg2.");
+    inst_lib.AddInst("Output", Config::hardware_t::Inst_Output, 2, "Local memory Arg1 => Output memory Arg2.");
+    inst_lib.AddInst("Commit", Config::hardware_t::Inst_Commit, 2, "Local memory Arg1 => Shared memory Arg2.");
+    inst_lib.AddInst("Pull", Config::hardware_t::Inst_Pull, 2, "Shared memory Arg1 => Shared memory Arg2.");
+    inst_lib.AddInst("Fork", Config::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
+    inst_lib.AddInst("Terminate", Config::hardware_t::Inst_Terminate, 0, "Terminate current thread.");
+    inst_lib.AddInst("Nop", Config::hardware_t::Inst_Nop, 0, "No operation."); 
+    }
+
+    void InitializeCustom(Config::hardware_t& hardware, emp::Random& random){
+     inst_lib.AddInst("Sense",
+         [&](Config::hardware_t & hw, const Config::inst_t & inst) {
+         Config::state_t& state = hw.GetCurState();
+           state.SetLocal(inst.args[0], (random.GetDouble(1.0) < hardware.GetTrait().streakyFactor ? 1 : 0));
+         },0,
+      "Generates the next number in the sequence based on the Streak Factor." );
+    inst_lib.AddInst("GS_EVEN",
+      [](Config::hardware_t & hw, const Config::inst_t & inst){hw.GetTrait().guess = 1;}, 0, "Guesses that a streak is evenly distributed.");
+    inst_lib.AddInst("GS_STRK",
+      [](Config::hardware_t & hw, const Config::inst_t & inst){hw.GetTrait().guess = 0;}, 0, "Guesses that a streak is unevenly distributed or 'streaky'.");  
+    }
+  private:
+    Config::inst_lib_t inst_lib;
+
+};

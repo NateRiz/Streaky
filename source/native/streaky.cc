@@ -3,15 +3,18 @@
 //  Released under GNU General Public License v3; see LICENSE
 
 #include <iostream>
-
-#include "base/vector.h"
-#include "config/command_line.h"
+#include "../StreakyWorld.h"
+#include "../StreakyWorld.cc"
 
 // This is the main function for the NATIVE version of Streaky.
-
 int main(int argc, char* argv[])
 {
-  emp::vector<std::string> args = emp::cl::args_to_strings(argc, argv);
-
-  std::cout << "Hello, world!" << std::endl;
+  StreakyWorld streakyWorld;
+ 
+  streakyWorld.Start();
+  for (unsigned int i = 0; i < 64; ++i){
+    std::cout << "_______Time"<<i << "________\n";
+    streakyWorld.Tick();
+  }
+  
 }
