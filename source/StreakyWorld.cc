@@ -19,7 +19,7 @@ StreakyWorld::StreakyWorld()
 
 void StreakyWorld::Restart(){
   ResetStreak();
-  for (auto& cell : cells){
+  for (auto cell : cells){
     cell.Restart(streakyFactor);
   }
 }
@@ -33,8 +33,16 @@ void StreakyWorld::ResetStreak(int streakType){
   }
 }
 
+void StreakyWorld::CreatePopulation(const unsigned int SAMPLES){
+  for (unsigned int i = 0; i < SAMPLES; ++i){
+    Cell cell{inst_lib, event_lib, random};
+    cell.SetProgram(GenRandSignalGPProgram(random, inst_lib));
+    Inject( cell );
+  }
+}
+
 void StreakyWorld::Tick(){
-  for (auto& cell : cells) { cell.Tick(); }
+  for (auto cell : cells) { cell.Tick(); }
 }
 
 std::vector<int> StreakyWorld::GetFitness(){
@@ -42,7 +50,7 @@ std::vector<int> StreakyWorld::GetFitness(){
   //whichever vector has the most of correctAnswer.
   //TODO secondary fitness attribute could be program size
   std::vector<int> fitness;
-  for (auto& cell : cells){
+  for (auto cell : cells){
     int guess = cell.hardware.GetTrait().guess;
     fitness.push_back((guess == -1 ? guess : guess == correctAnswer));
   }

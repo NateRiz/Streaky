@@ -13,6 +13,8 @@ int main(int argc, char* argv[])
   const unsigned int TICKS = 2000;
   const unsigned int SAMPLES = 1000;
   StreakyWorld streakyWorld;
+  
+  streakyWorld.CreatePopulation(SAMPLES);
 
 }
 

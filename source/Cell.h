@@ -4,12 +4,9 @@
 
 struct Cell{
 public:
-  Cell(const Config::inst_lib_t& il, const Config::event_lib_t& el, emp::Random& random)
+  Cell(Config::inst_lib_t& il, Config::event_lib_t& el, emp::Random& random)
   : hardware(il, el, &random)
-  , random(random)
   {
-    inst_lib = il;
-    event_lib = el;
     ConfigureHardware();  
   }
 
@@ -17,7 +14,6 @@ public:
     hardware.ResetHardware();
     hardware.GetTrait().guess = -1;
     hardware.GetTrait().streakyFactor = streakyFactor;
-    BindRandomProgram();
     hardware.SpawnCore(0);
   }
 
@@ -31,11 +27,12 @@ public:
     std::cout <<"\n\n";
   }
 
+  void SetProgram(Config::program_t program){
+    hardware.SetProgram(program);
+  }
+
 public:
-    Config::inst_lib_t inst_lib;
-    Config::event_lib_t event_lib;
-    Config::hardware_t hardware; 
-    emp::Random random;
+    Config::hardware_t hardware;
 
 private:
   void ConfigureHardware(){
@@ -48,12 +45,6 @@ private:
       os << "[SF: "<<trait.streakyFactor << " -- G: "<<trait.guess<<"]"<<std::endl;
     };
     hardware.SetTraitPrinter(trait_printer);
-  }
-
-  void BindRandomProgram(){
-    emp::EventDrivenGP_AW<Config::TAG_WIDTH, Config::TRAIT_TYPE>::Program program = GenRandSignalGPProgram(random, inst_lib); //Using all defaults.
-    hardware.SetProgram(program);
-    //hardware.PrintProgramFull();
   }
 
 };

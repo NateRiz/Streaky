@@ -12,14 +12,15 @@ class StreakyWorld: public emp::World<Cell>{
     std::vector<int> GetFitness();
     void ResetStreak(int streakType = -1);
     void PrintCurrentState();
+    void CreatePopulation(const unsigned int SAMPLES);
   
   private:
     void ConfigureHardware();
-    void BindRandomProgram();
 
   private:
     emp::Random random;
     Config::inst_lib_t inst_lib;
+    Config::event_lib_t event_lib;
     int streakyFactor;
     int correctAnswer;
     std::vector<Cell> cells{};

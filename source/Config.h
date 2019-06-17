@@ -22,6 +22,7 @@ class Config{
     using inst_t = hardware_t::Instruction;
     using event_lib_t = emp::EventLib<hardware_t>;
     using state_t = hardware_t::State;
+    using program_t = emp::EventDrivenGP_AW<TAG_WIDTH, TRAIT_TYPE>::Program;
 
 
 
