@@ -5,7 +5,7 @@ struct Trait{
   public:
     Trait():streakyFactor(0.0), guess(-1){}
     double streakyFactor;
-    int guess; // EVEN 0 : SREAKY 1
+    int guess; // STREAKY 0 : EVEN 1
 };
 
 class Config{

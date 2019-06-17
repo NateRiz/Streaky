@@ -1,21 +1,27 @@
 #pragma once
 #include "Config.h"
 #include "tools/Random.h"
+#include "Evolve/World.h"
+#include "Cell.h"
 
-class StreakyWorld{
+class StreakyWorld: public emp::World<Cell>{
   public:
     StreakyWorld();
-    void Start();
+    void Restart();
     void Tick();
-    
+    std::vector<int> GetFitness();
+    void ResetStreak(int streakType = -1);
+    void PrintCurrentState();
+  
   private:
     void ConfigureHardware();
     void BindRandomProgram();
 
   private:
-    emp::Random random = emp::Random(1);
+    emp::Random random;
     Config::inst_lib_t inst_lib;
-    Config::event_lib_t event_lib;
-    Config::hardware_t hardware = Config::hardware_t(&inst_lib, &event_lib, &random); 
+    int streakyFactor;
+    int correctAnswer;
+    std::vector<Cell> cells{};
 
 };

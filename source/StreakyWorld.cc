@@ -1,47 +1,51 @@
 #pragma once
 #include "StreakyWorld.h"
 #include "hardware/EventDrivenGP.h"
-#include "hardware/signalgp_utils.h"
 #include "InstructionLibrary.h"
+#include "Cell.h"
 
-StreakyWorld::StreakyWorld(){
+StreakyWorld::StreakyWorld()
+  : World("StreakyWorld")
+  , random(1)
+  , correctAnswer(-1)  
+{
   InstructionLibrary il;
-  inst_lib = il.CreateInstLib(hardware, random);
-  ConfigureHardware();
-  BindRandomProgram();
+  inst_lib = il.CreateInstLib(random);
+  SetFitFun([&](const Cell& cell)->double{
+    int guess = cell.hardware.GetTrait().guess;
+    return (guess == -1 ? guess : guess == this->correctAnswer);
+    });
 }
 
-void StreakyWorld::ConfigureHardware(){
-  hardware.SetMinBindThresh(Config::HW_MIN_SIM_THRESH);
-  hardware.SetMaxCores(Config::HW_MAX_THREADS);
-  hardware.SetMaxCallDepth(Config::HW_MAX_CALL_DEPTH);
- 
-  // Create a way for the hardware to print our traits.
-  auto trait_printer = [](std::ostream& os, Config::TRAIT_TYPE trait){
-    os << "[SF: "<<trait.streakyFactor << "G: "<<trait.guess<<"]"<<std::endl; 
-  };
-  hardware.SetTraitPrinter(trait_printer);
-
-  double streakyFactor = 0.5;
-  if (random.GetInt(2)){
-    streakyFactor+=random.GetDouble(0.1, 0.4);
+void StreakyWorld::Restart(){
+  ResetStreak();
+  for (auto& cell : cells){
+    cell.Restart(streakyFactor);
   }
-  hardware.GetTrait().streakyFactor = streakyFactor;
 }
 
-void StreakyWorld::BindRandomProgram(){
-  emp::EventDrivenGP_AW<Config::TAG_WIDTH, Config::TRAIT_TYPE>::Program program = GenRandSignalGPProgram(random, inst_lib); //Using all defaults.
-  hardware.SetProgram(program);
-  //hardware.PrintProgramFull();
-}
-
-void StreakyWorld::Start(){
-  hardware.ResetHardware();
-  hardware.SpawnCore(0);
+void StreakyWorld::ResetStreak(int streakType){
+  double streakyFactor = 0.5;
+  correctAnswer = 1;
+  if ((random.GetInt(2) == 0 && streakType == -1) || streakType == 0){
+    streakyFactor+=random.GetDouble(0.1, 0.4);
+    correctAnswer = 0;
+  }
 }
 
 void StreakyWorld::Tick(){
-  hardware.SingleProcess();
-  hardware.PrintState();
-  std::cout<<"\n\n";
+  for (auto& cell : cells) { cell.Tick(); }
 }
+
+std::vector<int> StreakyWorld::GetFitness(){
+  //TODO maybe change the guess to a vector. Better fitness would be
+  //whichever vector has the most of correctAnswer.
+  //TODO secondary fitness attribute could be program size
+  std::vector<int> fitness;
+  for (auto& cell : cells){
+    int guess = cell.hardware.GetTrait().guess;
+    fitness.push_back((guess == -1 ? guess : guess == correctAnswer));
+  }
+  return fitness;
+}
+

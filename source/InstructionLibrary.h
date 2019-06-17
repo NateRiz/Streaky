@@ -6,10 +6,10 @@ class InstructionLibrary{
   public:
   InstructionLibrary()=default;
 
-  Config::inst_lib_t& CreateInstLib(Config::hardware_t& hardware, emp::Random& random){
+  Config::inst_lib_t& CreateInstLib(emp::Random& random){
     inst_lib = Config::inst_lib_t();
     InitializeDefault();
-    InitializeCustom(hardware, random);
+    InitializeCustom(random);
     return inst_lib;
   }
 
@@ -45,11 +45,11 @@ class InstructionLibrary{
     inst_lib.AddInst("Nop", Config::hardware_t::Inst_Nop, 0, "No operation."); 
     }
 
-    void InitializeCustom(Config::hardware_t& hardware, emp::Random& random){
+    void InitializeCustom(emp::Random& random){
      inst_lib.AddInst("Sense",
          [&](Config::hardware_t & hw, const Config::inst_t & inst) {
          Config::state_t& state = hw.GetCurState();
-           state.SetLocal(inst.args[0], (random.GetDouble(1.0) < hardware.GetTrait().streakyFactor ? 1 : 0));
+           state.SetLocal(inst.args[0], (random.GetDouble(1.0) < hw.GetTrait().streakyFactor ? inst.args[0] : (inst.args[0]+1)%2));
          },0,
       "Generates the next number in the sequence based on the Streak Factor." );
     inst_lib.AddInst("GS_EVEN",

@@ -3,18 +3,16 @@
 //  Released under GNU General Public License v3; see LICENSE
 
 #include <iostream>
-#include "../StreakyWorld.h"
 #include "../StreakyWorld.cc"
+#include "hardware/EventDrivenGP.h"
+
 
 // This is the main function for the NATIVE version of Streaky.
 int main(int argc, char* argv[])
 {
+  const unsigned int TICKS = 2000;
+  const unsigned int SAMPLES = 1000;
   StreakyWorld streakyWorld;
- 
-  streakyWorld.Start();
-  for (unsigned int i = 0; i < 64; ++i){
-    std::cout << "_______Time"<<i << "________\n";
-    streakyWorld.Tick();
-  }
-  
+
 }
+
