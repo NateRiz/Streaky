@@ -40,24 +40,34 @@ class InstructionLibrary{
     inst_lib.AddInst("Output", Config::hardware_t::Inst_Output, 2, "Local memory Arg1 => Output memory Arg2.");
     inst_lib.AddInst("Commit", Config::hardware_t::Inst_Commit, 2, "Local memory Arg1 => Shared memory Arg2.");
     inst_lib.AddInst("Pull", Config::hardware_t::Inst_Pull, 2, "Shared memory Arg1 => Shared memory Arg2.");
-    inst_lib.AddInst("Fork", Config::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
+    //inst_lib.AddInst("Fork", Config::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
     inst_lib.AddInst("Terminate", Config::hardware_t::Inst_Terminate, 0, "Terminate current thread.");
     inst_lib.AddInst("Nop", Config::hardware_t::Inst_Nop, 0, "No operation."); 
     }
 
     void InitializeCustom(emp::Random& random){
+     /// Changes the next in the sequence to alternating if factor == 0.5 otherwise randomly changes it based on factor.
      inst_lib.AddInst("Sense",
          [&](Config::hardware_t & hw, const Config::inst_t & inst) {
          Config::state_t& state = hw.GetCurState();
-           state.SetLocal(inst.args[0], (random.GetDouble(1.0) < hw.GetTrait().streakyFactor ? inst.args[0] : (inst.args[0]+1)%2));
-         },0,
-      "Generates the next number in the sequence based on the Streak Factor." );
+         if (hw.GetTrait().streakyFactor < 0.59){
+           hw.GetTrait().sequenceBit = (hw.GetTrait().sequenceBit+1)%2;
+         }
+         state.SetLocal(inst.args[0], hw.GetTrait().sequenceBit);
+         },1,
+      "Arg1 = Next in sequence." );
     inst_lib.AddInst("GS_EVEN",
       [](Config::hardware_t & hw, const Config::inst_t & inst){hw.GetTrait().guess = 1;}, 0, "Guesses that a streak is evenly distributed.");
     inst_lib.AddInst("GS_STRK",
       [](Config::hardware_t & hw, const Config::inst_t & inst){hw.GetTrait().guess = 0;}, 0, "Guesses that a streak is unevenly distributed or 'streaky'.");  
+    
+    //inst_lib.AddInst("Debug",[](Config::hardware_t& hw, const Config::inst_t& inst){
+       // Config::state_t& state = hw.GetCurState();
+       // std::cout << state.GetLocal(inst.args[0])<<std::endl;
+       // },1,"debug");
     }
   private:
     Config::inst_lib_t inst_lib;
 
-};
+};  
+

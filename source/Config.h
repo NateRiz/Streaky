@@ -1,11 +1,15 @@
 #pragma once
 #include "hardware/EventDrivenGP.h"
+#include "hardware/signalgp_utils.h"
 
 struct Trait{
   public:
-    Trait():streakyFactor(0.0), guess(-1){}
+    Trait():streakyFactor(), guess(-1), fitness(0){;
+    }
     double streakyFactor;
     int guess; // STREAKY 0 : EVEN 1
+    double fitness;
+    int sequenceBit;
 };
 
 class Config{
@@ -23,6 +27,7 @@ class Config{
     using event_lib_t = emp::EventLib<hardware_t>;
     using state_t = hardware_t::State;
     using program_t = emp::EventDrivenGP_AW<TAG_WIDTH, TRAIT_TYPE>::Program;
+    using mutator_t = emp::SignalGPMutator<Config::TAG_WIDTH, Config::TRAIT_TYPE>;
 
 
 

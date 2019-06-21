@@ -9,20 +9,26 @@ class StreakyWorld: public emp::World<Cell>{
     StreakyWorld();
     void Restart();
     void Tick();
-    std::vector<int> GetFitness();
     void ResetStreak(int streakType = -1);
     void PrintCurrentState();
     void CreatePopulation(const unsigned int SAMPLES);
-  
+    void Start();
+    double GetFitness(Cell& cell);
+
   private:
     void ConfigureHardware();
+    void PrintBestCell();
 
   private:
     emp::Random random;
     Config::inst_lib_t inst_lib;
     Config::event_lib_t event_lib;
-    int streakyFactor;
+    Config::mutator_t mutator;
+    double streakyFactor;
     int correctAnswer;
-    std::vector<Cell> cells{};
+    int bestFitness = -10;
+    const unsigned int TICKS = 100;
+    const unsigned int TESTS = 100;
+
 
 };
