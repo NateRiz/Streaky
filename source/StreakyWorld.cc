@@ -6,7 +6,7 @@
 
 StreakyWorld::StreakyWorld()
   : World("StreakyWorld")
-  , random(2)
+  , random(1)
   , correctAnswer(-1)
 {
   MarkSynchronous(true);
@@ -16,10 +16,7 @@ StreakyWorld::StreakyWorld()
   inst_lib = il.CreateInstLib(random);
 
   SetFitFun([&](const Cell& cell)->double{
-      double fitness =  cell.hardware.GetTrait().fitness;
-      if (fitness == (int)TESTS){
-        //fitness += 1000 - cell.hardware.GetConstProgram().GetInstCnt();
-      }
+      double fitness =  cell.hardware.GetTrait().fitness; 
       return fitness;
   });
 
@@ -35,8 +32,8 @@ StreakyWorld::StreakyWorld()
     for(auto cell : pop){
       cell->hardware.GetTrait().fitness = 0; 
     }
-
     for (unsigned int i = 0; i < TESTS; ++i){
+      unsigned int extraTicksNoise = random.GetInt(1,30);
       ResetStreak(i%2);
       unsigned int sequenceBit = random.GetInt(0,2);
       for (auto cell : pop){
@@ -45,10 +42,15 @@ StreakyWorld::StreakyWorld()
         cell->hardware.GetTrait().streakyFactor = streakyFactor;
         cell->hardware.GetTrait().guess = -1;
         cell->hardware.GetTrait().sequenceBit = sequenceBit;
-        for(unsigned int t = 0; t < TICKS; ++t){
+        for(unsigned int t = 0; t < TICKS+extraTicksNoise; ++t){
           cell->Tick();
         }
+
         cell->hardware.GetTrait().fitness+=GetFitness(*cell);
+        if ( cell->hardware.GetTrait().fitness == (int)TESTS){
+          cell->hardware.GetTrait().fitness += 10000 - cell->hardware.GetConstProgram().GetInstCnt();
+        }
+
       }
     }
     TournamentSelect(*this, 2, GetNumOrgs());
@@ -63,7 +65,7 @@ double StreakyWorld::GetFitness(Cell& cell){
 void StreakyWorld::Start(){
   unsigned int gen = 0;
   while (true) {
-    if(!gen%100){std::cout << "GEN: " << gen++ << std::endl;}
+    if(!(gen%100)){std::cout << "GEN: " << gen++ << std::endl;}
     for (auto cell : pop){
       cell->hardware.GetTrait().fitness = 0;
     }

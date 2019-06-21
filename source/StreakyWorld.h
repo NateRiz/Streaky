@@ -27,7 +27,7 @@ class StreakyWorld: public emp::World<Cell>{
     double streakyFactor;
     int correctAnswer;
     int bestFitness = -10;
-    const unsigned int TICKS = 100;
+    const unsigned int TICKS = 75;
     const unsigned int TESTS = 100;
 
 

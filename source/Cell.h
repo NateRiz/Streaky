@@ -32,13 +32,6 @@ public:
     hardware.SetProgram(program);
   }
 
-  /*size_t DoMutations(emp::Random& random){
-    if (random.GetDouble() < 0.5 ){
-      std::cout<<"Doing Mutations"<<std::endl;
-      return mutator.ApplyMutations(hardware.GetProgram(), random);   
-    }std::cout <<"No Mutations\n";
-    return 0;
-  }*/
 
 public:
     Config::hardware_t hardware;
