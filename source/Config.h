@@ -5,8 +5,6 @@
 #include "hardware/EventDrivenGP.h"
 #include "hardware/signalgp_utils.h"
 
-#include "Sequence.h"
-
 // forward declaration
 class Trait;
 
