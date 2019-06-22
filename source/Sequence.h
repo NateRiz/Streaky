@@ -11,14 +11,14 @@ class Sequence {
 private:
 
   emp::vector<int> seq;
-  emp::Random rand;
+  emp::Random &rand;
 
   const double p_switch;
 
 public:
 
-  Sequence(const size_t seed, const double p_switch_)
-  : rand(seed)
+  Sequence(emp::Random &rand_, const double p_switch_)
+  : rand(rand_)
   , p_switch(p_switch_)
   {
     emp_assert(seed > 0);

@@ -34,8 +34,7 @@ StreakyWorld::StreakyWorld()
     for (size_t seq = 0; seq < Config::SEQS.size(); ++seq) {
       for (size_t rep = 0; rep < Config::SEQ_REPS; ++rep) {
         tests.emplace_back(
-          Config::SEED * (update * Config::SEQS.size() * Config::SEQ_REPS
-          + seq * Config::SEQ_REPS + rep),
+          StreakyWorld::random,
           Config::SEQS[seq]
         );
       }
