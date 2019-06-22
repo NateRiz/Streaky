@@ -11,7 +11,7 @@ Streaky
         :alt: Documentation Status
 
 
-Using SignalGP to guess types of bit sequences.
+To develop a new toy problem designed to test the capacity of programs evolved using the genetic programming representation SignalGP to detect underlying state from an uncertain sequence of observations. In this preliminary work, we will evaluate the baseline performance of SignalGP across a range of problem difficulties. This toy problem will serve as a benchmark to evaluate further refinements of SignalGP against, particularly tag-matching methods used to control function calls.
 
 Check out the live in-browser web app at `https://NateRiz.github.io/streaky`_.
 
