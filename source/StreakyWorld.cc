@@ -6,8 +6,7 @@
 
 StreakyWorld::StreakyWorld()
   : World("StreakyWorld")
-  , random(1)
-  , correctAnswer(-1)
+  , random(Config::SEED)
 {
   MarkSynchronous(true);
   SetPopStruct_Mixed(true);
@@ -16,50 +15,37 @@ StreakyWorld::StreakyWorld()
   inst_lib = il.CreateInstLib(random);
 
   SetFitFun([&](const Cell& cell)->double{
-      double fitness =  cell.hardware.GetTrait().fitness; 
+      double fitness =  cell.hardware.GetTrait().fitness;
       return fitness;
   });
 
   mutator.ResetMutators();
   SetMutFun([&](Cell& cell, emp::Random& random)->size_t{
-      if(random.GetDouble() < 0.5){
-        return mutator.ApplyMutations(cell.hardware.GetProgram(), random);
-      }
-      return 0;
-      });
-
-  OnUpdate([&](size_t updates)->void{
-    for(auto cell : pop){
-      cell->hardware.GetTrait().fitness = 0; 
+    if(random.GetDouble() < 0.5){
+      return mutator.ApplyMutations(cell.hardware.GetProgram(), random);
     }
-    for (unsigned int i = 0; i < TESTS; ++i){
-      unsigned int extraTicksNoise = random.GetInt(1,30);
-      ResetStreak(i%2);
-      unsigned int sequenceBit = random.GetInt(0,2);
-      for (auto cell : pop){
-        cell->hardware.ResetHardware();
-        cell->hardware.SpawnCore(0);
-        cell->hardware.GetTrait().streakyFactor = streakyFactor;
-        cell->hardware.GetTrait().guess = -1;
-        cell->hardware.GetTrait().sequenceBit = sequenceBit;
-        for(unsigned int t = 0; t < TICKS+extraTicksNoise; ++t){
-          cell->Tick();
-        }
+    return 0;
+  });
 
-        cell->hardware.GetTrait().fitness+=GetFitness(*cell);
-        if ( cell->hardware.GetTrait().fitness == (int)TESTS){
-          cell->hardware.GetTrait().fitness += 10000 - cell->hardware.GetConstProgram().GetInstCnt();
-        }
+  OnUpdate([&](size_t update)->void{
 
+    emp::vector<Sequence> tests;
+    tests.reserve(Config::SEQ_REPS*Config::SEQS.size());
+    for (size_t seq = 0; seq < Config::SEQS.size(); ++seq) {
+      for (size_t rep = 0; rep < Config::SEQ_REPS; ++rep) {
+        tests.emplace_back(
+          Config::SEED * (update * Config::SEQS.size() * Config::SEQ_REPS
+          + seq * Config::SEQ_REPS + rep),
+          Config::SEQS[seq]
+        );
       }
     }
+
+    for(auto & cell : pop) cell->CacheFitness(tests);
+
     TournamentSelect(*this, 2, GetNumOrgs());
-    });
-}
 
-double StreakyWorld::GetFitness(Cell& cell){
-  int guess = cell.hardware.GetTrait().guess;
-  return (guess == -1 ? guess : guess == correctAnswer);
+  });
 }
 
 void StreakyWorld::Start(){
@@ -89,15 +75,6 @@ void StreakyWorld::PrintBestCell(){
   }
 }
 
-void StreakyWorld::ResetStreak(int streakType){
-  streakyFactor = 0.5;
-  correctAnswer = 1;
-  if (streakType == 0){
-    streakyFactor+=random.GetDouble(0.1, 0.4);
-    correctAnswer = 0;
-  }
-}
-
 void StreakyWorld::CreatePopulation(const unsigned int SAMPLES){
   for (unsigned int i = 0; i < SAMPLES; ++i){
     Cell cell{inst_lib, event_lib, random, mutator};
@@ -107,4 +84,3 @@ void StreakyWorld::CreatePopulation(const unsigned int SAMPLES){
     Inject( cell );
   }
 }
-
