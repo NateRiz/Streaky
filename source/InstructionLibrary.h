@@ -1,5 +1,7 @@
 #pragma once
+
 #include "hardware/InstLib.h"
+
 #include "Config.h"
 
 class InstructionLibrary{
@@ -42,25 +44,37 @@ class InstructionLibrary{
     inst_lib.AddInst("Pull", Config::hardware_t::Inst_Pull, 2, "Shared memory Arg1 => Shared memory Arg2.");
     //inst_lib.AddInst("Fork", Config::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
     inst_lib.AddInst("Terminate", Config::hardware_t::Inst_Terminate, 0, "Terminate current thread.");
-    inst_lib.AddInst("Nop", Config::hardware_t::Inst_Nop, 0, "No operation."); 
+    inst_lib.AddInst("Nop", Config::hardware_t::Inst_Nop, 0, "No operation.");
     }
 
     void InitializeCustom(emp::Random& random){
-     /// Changes the next in the sequence to alternating if factor == 0.5 otherwise randomly changes it based on factor.
-     inst_lib.AddInst("Sense",
-         [&](Config::hardware_t & hw, const Config::inst_t & inst) {
-         Config::state_t& state = hw.GetCurState();
-         if (hw.GetTrait().streakyFactor < 0.59){
-           hw.GetTrait().sequenceBit = (hw.GetTrait().sequenceBit+1)%2;
-         }
-         state.SetLocal(inst.args[0], hw.GetTrait().sequenceBit);
-         },1,
-      "Arg1 = Next in sequence." );
-    inst_lib.AddInst("GS_EVEN",
-      [](Config::hardware_t & hw, const Config::inst_t & inst){hw.GetTrait().guess = 1;}, 0, "Guesses that a streak is evenly distributed.");
-    inst_lib.AddInst("GS_STRK",
-      [](Config::hardware_t & hw, const Config::inst_t & inst){hw.GetTrait().guess = 0;}, 0, "Guesses that a streak is unevenly distributed or 'streaky'.");  
-    
+    /// Changes the next in the sequence to alternating if factor == 0.5 otherwise randomly changes it based on factor.
+    inst_lib.AddInst(
+     "Sense",
+      [&](Config::hardware_t & hw, const Config::inst_t & inst) {
+        Config::state_t& state = hw.GetCurState();
+
+        const int cur = hw.GetTrait().seq->Get(hw.GetTrait().sense_idx++);
+
+        state.SetLocal(inst.args[0], cur);
+      },
+      1,
+      "Arg1 = Next in sequence."
+);
+
+    for (size_t idx = 0; idx < Config::SEQS.size(); ++idx) {
+
+      inst_lib.AddInst(
+        emp::to_string("GS_", idx),
+        [idx](Config::hardware_t & hw, const Config::inst_t & inst){
+          hw.GetTrait().guess = idx;
+        },
+        0,
+        "Guesses the identity of a sequence."
+      );
+
+    }
+
     //inst_lib.AddInst("Debug",[](Config::hardware_t& hw, const Config::inst_t& inst){
        // Config::state_t& state = hw.GetCurState();
        // std::cout << state.GetLocal(inst.args[0])<<std::endl;
@@ -69,5 +83,4 @@ class InstructionLibrary{
   private:
     Config::inst_lib_t inst_lib;
 
-};  
-
+};

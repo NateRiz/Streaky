@@ -3,8 +3,9 @@
 //  Released under GNU General Public License v3; see LICENSE
 
 #include <iostream>
+
+#include "../Config.h"
 #include "../StreakyWorld.cc"
-#include "hardware/EventDrivenGP.h"
 
 /**
  *
@@ -19,10 +20,8 @@
 // This is the main function for the NATIVE version of Streaky.
 int main(int argc, char* argv[])
 {
-  const unsigned int SAMPLES = 1000;
   StreakyWorld streakyWorld;
-  streakyWorld.CreatePopulation(SAMPLES);
+  streakyWorld.CreatePopulation(Config::POP_SIZE);
   streakyWorld.Start();
-  std::cout << "DONE." <<std::endl;
+  std::cout << "DONE." << std::endl;
 }
-

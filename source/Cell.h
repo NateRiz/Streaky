@@ -1,27 +1,36 @@
 #pragma once
-#include "Config.h"
+
 #include "hardware/signalgp_utils.h"
 
+#include "Config.h"
+#include "Sequence.h"
+#include "Trait.h"
+
 struct Cell{
+
+  emp::Random &rand;
+
 public:
   Cell(Config::inst_lib_t& il, Config::event_lib_t& el, emp::Random& random, Config::mutator_t& mut)
-  : hardware(il, el, &random)
+  : rand(random)
+  , hardware(il, el, &random)
   , mutator(mut)
   {
-    ConfigureHardware();  
+    ConfigureHardware();
   }
 
-  void Restart(double &streakyFactor){
+  void Restart(){
     hardware.ResetHardware();
     hardware.GetTrait().guess = -1;
-    hardware.GetTrait().streakyFactor = streakyFactor;
+    hardware.GetTrait().sense_idx = 0;
+    hardware.GetTrait().seq = nullptr;
     hardware.SpawnCore(0);
   }
 
   void Tick(){
     hardware.SingleProcess();
   }
-    
+
   void PrintCurrentState(){
     hardware.PrintProgramFull();
     hardware.PrintState();
@@ -32,6 +41,38 @@ public:
     hardware.SetProgram(program);
   }
 
+  int EvalSequence(Sequence & seq) {
+    Restart();
+    hardware.GetTrait().seq = &seq;
+    hardware.SpawnCore(0);
+
+    for (
+      size_t t = 0;
+      t < Config::TICKS + rand.GetInt(Config::TICKS_NOISE);
+      ++t
+    ) Tick();
+
+    const double idx_guess = hardware.GetTrait().guess;
+    const double p_guess = (idx_guess == -1) ? idx_guess : Config::SEQS[idx_guess];
+
+    return (p_guess == -1 ? p_guess : p_guess == seq.P());
+  }
+
+  int EvalSequences(emp::vector<Sequence> & seqs) {
+
+    int sum = 0;
+    for(Sequence & seq : seqs) sum += EvalSequence(seq);
+    return sum;
+
+  }
+
+  void CacheFitness(emp::vector<Sequence> & seqs) {
+    int fit = EvalSequences(seqs);
+    if ( fit == (int) seqs.size() ) {
+      fit += 10000 - hardware.GetConstProgram().GetInstCnt();
+    }
+    hardware.GetTrait().fitness = fit;
+  }
 
 public:
     Config::hardware_t hardware;
@@ -45,7 +86,9 @@ private:
 
     // Create a way for the hardware to print our traits.
     auto trait_printer = [](std::ostream& os, Config::TRAIT_TYPE trait){
-      os << "[SF: "<<trait.streakyFactor << " -- G: "<<trait.guess<<"]"<<std::endl;
+      os << "[SF: " << trait.seq->P()
+         << " -- G: " << trait.guess << "]"
+         << std::endl;
     };
     hardware.SetTraitPrinter(trait_printer);
   }

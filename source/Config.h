@@ -1,16 +1,12 @@
 #pragma once
+
+#include "base/vector.h"
+#include "base/Ptr.h"
 #include "hardware/EventDrivenGP.h"
 #include "hardware/signalgp_utils.h"
 
-struct Trait{
-  public:
-    Trait():streakyFactor(), guess(-1), fitness(0){;
-    }
-    double streakyFactor;
-    int guess; // STREAKY 0 : EVEN 1
-    double fitness;
-    int sequenceBit;
-};
+// forward declaration
+class Trait;
 
 class Config{
   public:
@@ -20,6 +16,14 @@ class Config{
     static constexpr size_t HW_MAX_CALL_DEPTH = 128;
     static constexpr double HW_MIN_SIM_THRESH = 0.0;
 
+    static constexpr unsigned int TICKS = 75;
+    static constexpr unsigned int TICKS_NOISE = 30;
+    static constexpr unsigned int SEQ_REPS = 50;
+    static constexpr int SEED = 1;
+    static constexpr size_t POP_SIZE = 1000;
+
+    static constexpr emp::array<double, 2> SEQS{0.0, 1.0};
+
     using TRAIT_TYPE = Trait;
     using hardware_t = emp::EventDrivenGP_AW<TAG_WIDTH, TRAIT_TYPE>;
     using inst_lib_t = emp::InstLib<hardware_t>;
@@ -28,7 +32,6 @@ class Config{
     using state_t = hardware_t::State;
     using program_t = emp::EventDrivenGP_AW<TAG_WIDTH, TRAIT_TYPE>::Program;
     using mutator_t = emp::SignalGPMutator<Config::TAG_WIDTH, Config::TRAIT_TYPE>;
-
 
 
 };
