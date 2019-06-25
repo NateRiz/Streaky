@@ -29,7 +29,7 @@ class InstructionLibrary{
     inst_lib.AddInst("TestNEqu", Config::hardware_t::Inst_TestNEqu, 3, "Local memory: Arg3 = (Arg1 != Arg2)");
     inst_lib.AddInst("TestLess", Config::hardware_t::Inst_TestLess, 3, "Local memory: Arg3 = (Arg1 < Arg2)");
     inst_lib.AddInst("If", Config::hardware_t::Inst_If, 1, "Local memory: If Arg1 != 0, proceed; else, skip block.", emp::ScopeType::BASIC, 0, {"block_def"});
-    inst_lib.AddInst("While", Config::hardware_t::Inst_While, 1, "If (Local[Arg1] != 0) { execute block } else { skip block }");
+    inst_lib.AddInst("While", Config::hardware_t::Inst_While, 1, "Local memory: If Arg1 != 0, loop; else, skip block.", emp::ScopeType::BASIC, 0, {"block_def"});
     inst_lib.AddInst("Countdown", Config::hardware_t::Inst_Countdown, 1, "Local memory: Countdown Arg1 to zero.", emp::ScopeType::BASIC, 0, {"block_def"});
     inst_lib.AddInst("Close", Config::hardware_t::Inst_Close, 0, "Close current block if there is a block to close.", emp::ScopeType::BASIC, 0, {"block_close"});
     inst_lib.AddInst("Break", Config::hardware_t::Inst_Break, 0, "Break out of current block.");
@@ -75,10 +75,7 @@ class InstructionLibrary{
 
     }
 
-    //inst_lib.AddInst("Debug",[](Config::hardware_t& hw, const Config::inst_t& inst){
-       // Config::state_t& state = hw.GetCurState();
-       // std::cout << state.GetLocal(inst.args[0])<<std::endl;
-       // },1,"debug");
+    //inst_lib.AddInst("Debug",[](Config::hardware_t& hw, const Config::inst_t& inst){Config::state_t& state = hw.GetCurState(); std::cout << state.GetLocal(inst.args[0])<<std::endl;},1,"debug");
     }
   private:
     Config::inst_lib_t inst_lib;

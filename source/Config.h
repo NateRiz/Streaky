@@ -16,7 +16,7 @@ class Config{
     static constexpr size_t HW_MAX_CALL_DEPTH = 128;
     static constexpr double HW_MIN_SIM_THRESH = 0.0;
 
-    static constexpr unsigned int TICKS = 75;
+    static constexpr unsigned int TICKS = 50;
     static constexpr unsigned int TICKS_NOISE = 30;
     static constexpr unsigned int SEQ_REPS = 50;
     static constexpr int SEED = 1;
@@ -33,5 +33,13 @@ class Config{
     using program_t = emp::EventDrivenGP_AW<TAG_WIDTH, TRAIT_TYPE>::Program;
     using mutator_t = emp::SignalGPMutator<Config::TAG_WIDTH, Config::TRAIT_TYPE>;
 
+    static constexpr double ARG_SUB__PER_ARG = 0.01;
+    static constexpr double INST_INS__PER_INST = 0.01;
+    static constexpr double INST_DEL__PER_INST = 0.01;
+    static constexpr double INST_SUB__PER_INST = 0.01;
+    static constexpr double SLIP__PER_FUNC = 0.01;
+    static constexpr double FUNC_DUP__PER_FUNC = 0.01;
+    static constexpr double FUNC_DEL__PER_FUNC = 0.01;
+    static constexpr double TAG_BIT_FLIP__PER_BIT= 0.01;
 
 };

@@ -7,9 +7,6 @@
 #include "Trait.h"
 
 struct Cell{
-
-  emp::Random &rand;
-
 public:
   Cell(Config::inst_lib_t& il, Config::event_lib_t& el, emp::Random& random, Config::mutator_t& mut)
   : rand(random)
@@ -44,7 +41,6 @@ public:
   int EvalSequence(Sequence & seq) {
     Restart();
     hardware.GetTrait().seq = &seq;
-    hardware.SpawnCore(0);
 
     for (
       size_t t = 0;
@@ -75,6 +71,7 @@ public:
   }
 
 public:
+    emp::Random &rand;
     Config::hardware_t hardware;
     Config::mutator_t mutator;
 

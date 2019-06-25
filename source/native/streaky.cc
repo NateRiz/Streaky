@@ -3,7 +3,7 @@
 //  Released under GNU General Public License v3; see LICENSE
 
 #include <iostream>
-
+#include "../Trait.h"
 #include "../Config.h"
 #include "../StreakyWorld.cc"
 

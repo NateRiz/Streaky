@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include "../Trait.h"
+#include "../Sequence.h"
 #include "../Config.h"
 #include "../InstructionLibrary.h"
 
@@ -23,20 +25,19 @@ int main(){
     prog.close();
 
 
+
     for (int i = 0; i < 30; ++i){
       Trait trait;
       hardware.SetTrait(trait);
       hardware.ResetHardware();
       hardware.SpawnCore(0);
-      hardware.GetTrait().streakyFactor = 0.7;
-      if(i%2==0){
-        hardware.GetTrait().streakyFactor=0.5;
-      }      
+      Sequence sequence(random, i%2);
+      hardware.GetTrait().seq = &sequence;
 
       for(unsigned int i = 0; i < 50; ++i){
         hardware.SingleProcess();
       }
       
-      std::cout << "Guess:"<<hardware.GetTrait().guess << " CA: "<<i%2<<std::endl;
+      std::cout << "Guess:"<<hardware.GetTrait().guess << " CA: "<<sequence.P()<<std::endl;
     }
 }
