@@ -32,6 +32,6 @@ public:
   }
   
 private:
-  emp::DataFile dfile = emp::DataFile("results.dat");
+  emp::DataFile dfile = emp::DataFile("results.csv");
 
 };

@@ -19,7 +19,7 @@ class Config{
     static constexpr unsigned int SEQ_REPS = 50;
     static constexpr int SEED = 10;
     static constexpr size_t POP_SIZE = 1000;
-    static constexpr unsigned int MAX_GENERATIONS = 400;
+    static constexpr int MAX_GENERATIONS = -1;
 
     static constexpr emp::array<double, 2> SEQS{0.0, 1.0};
 

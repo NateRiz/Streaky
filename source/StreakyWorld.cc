@@ -19,7 +19,7 @@ StreakyWorld::StreakyWorld()
 
 void StreakyWorld::Start(){
   unsigned int gen = 0;
-  while (gen < Config::MAX_GENERATIONS) {
+  while (gen < Config::MAX_GENERATIONS || Config::MAX_GENERATIONS == -1) {
     ++gen;
     if(!(gen%50)) { std::cout << "GEN: " << gen << std::endl; }
     for (auto cell : pop){
@@ -84,10 +84,10 @@ void StreakyWorld::ConfigureWorld(){
       for (size_t rep = 0; rep < Config::SEQ_REPS; ++rep) {
         tests.emplace_back(
           StreakyWorld::random,
-          Config::SEQS[seq]
+          //Config::SEQS[seq]
           // Uncomment the next line to change 0/1 to .5/.7-.9
           // Harder sol't for genome
-          //(seq % 2 == 0 ? random.GetDouble(0.2, 0.4) + 0.5 : 0.5)
+          (seq % 2 == 0 ? random.GetDouble(0.2, 0.4) + 0.5 : 0.5)
           // 30/70 10/90% each bit is 0/1
         );
       }
