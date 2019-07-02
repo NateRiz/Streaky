@@ -19,7 +19,6 @@ public:
   void Restart(){
     hardware.ResetHardware();
     hardware.GetTrait().guess = -1;
-    hardware.GetTrait().sense_idx = 0;
     hardware.GetTrait().seq = nullptr;
     hardware.SpawnCore(0);
   }

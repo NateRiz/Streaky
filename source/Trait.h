@@ -1,23 +1,22 @@
 #pragma once
 
 #include "base/Ptr.h"
+#include "Config.h"
 
 // forward declaration
 class Sequence;
 
 struct Trait{
-
-  public:
-
-    Trait()
-    : guess(-1)
-    , fitness(0)
-    , sense_idx(0)
-    { ;}
-
+public:
+  
+    Trait(); 
+    ~Trait()=default;
+    
     int guess;
     double fitness;
     emp::Ptr<Sequence> seq;
-    size_t sense_idx;
 
+    //Analytics
+    size_t senseCount;
+    emp::vector<size_t> guessCount;
 };

@@ -35,7 +35,7 @@ public:
 
   void Extend() { seq.push_back(seq.back() ^ rand.P(p_switch)); }
 
-  double P() const { return p_switch; };
+  double P() const { return p_switch <= 0.5001 ? 0 : 1; };
 
 
 

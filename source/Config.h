@@ -4,9 +4,7 @@
 #include "base/Ptr.h"
 #include "hardware/EventDrivenGP.h"
 #include "hardware/signalgp_utils.h"
-
-// forward declaration
-class Trait;
+#include "Trait.h"
 
 class Config{
   public:
@@ -16,11 +14,12 @@ class Config{
     static constexpr size_t HW_MAX_CALL_DEPTH = 128;
     static constexpr double HW_MIN_SIM_THRESH = 0.0;
 
-    static constexpr unsigned int TICKS = 50;
+    static constexpr unsigned int TICKS = 70;
     static constexpr unsigned int TICKS_NOISE = 30;
     static constexpr unsigned int SEQ_REPS = 50;
-    static constexpr int SEED = 1;
+    static constexpr int SEED = 10;
     static constexpr size_t POP_SIZE = 1000;
+    static constexpr unsigned int MAX_GENERATIONS = 400;
 
     static constexpr emp::array<double, 2> SEQS{0.0, 1.0};
 

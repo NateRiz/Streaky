@@ -48,19 +48,17 @@ class InstructionLibrary{
     }
 
     void InitializeCustom(emp::Random& random){
-    /// Changes the next in the sequence to alternating if factor == 0.5 otherwise randomly changes it based on factor.
     inst_lib.AddInst(
      "Sense",
       [&](Config::hardware_t & hw, const Config::inst_t & inst) {
+        hw.GetTrait().senseCount+=1;
         Config::state_t& state = hw.GetCurState();
-
-        const int cur = hw.GetTrait().seq->Get(hw.GetTrait().sense_idx++);
-
+        const int cur = hw.GetTrait().seq->Get(hw.GetTrait().senseCount);
         state.SetLocal(inst.args[0], cur);
       },
       1,
       "Arg1 = Next in sequence."
-);
+    );
 
     for (size_t idx = 0; idx < Config::SEQS.size(); ++idx) {
 
@@ -68,6 +66,7 @@ class InstructionLibrary{
         emp::to_string("GS_", idx),
         [idx](Config::hardware_t & hw, const Config::inst_t & inst){
           hw.GetTrait().guess = idx;
+          hw.GetTrait().guessCount[idx]+=1;
         },
         0,
         "Guesses the identity of a sequence."
