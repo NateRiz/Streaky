@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "../Trait.h"
+#include "../Trait.cc"
 #include "../Sequence.h"
 #include "../Config.h"
 #include "../InstructionLibrary.h"
@@ -34,10 +34,9 @@ int main(){
       Sequence sequence(random, i%2);
       hardware.GetTrait().seq = &sequence;
 
-      for(unsigned int i = 0; i < 50; ++i){
+      for(unsigned int i = 0; i < 300000; ++i){
         hardware.SingleProcess();
       }
       
-      std::cout << "Guess:"<<hardware.GetTrait().guess << " CA: "<<sequence.P()<<std::endl;
     }
 }

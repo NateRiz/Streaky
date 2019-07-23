@@ -1,7 +1,6 @@
 #pragma once
 
 #include "base/Ptr.h"
-#include "Config.h"
 
 // forward declaration
 class Sequence;

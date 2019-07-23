@@ -21,7 +21,6 @@ public:
   : rand(rand_)
   , p_switch(p_switch_)
   {
-    emp_assert(seed > 0);
     seq.reserve(Config::TICKS + Config::TICKS_NOISE);
     seq.push_back(rand.P(0.5));
   };

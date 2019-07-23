@@ -86,7 +86,7 @@ private:
          << " -- G: " << trait.guess << "]"
          << std::endl;
     };
-    hardware.SetTraitPrinter(trait_printer);
+    hardware.SetTraitPrintFun(trait_printer);
   }
 
 };

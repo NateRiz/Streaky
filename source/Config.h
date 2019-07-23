@@ -21,15 +21,23 @@ class Config{
     static constexpr size_t POP_SIZE = 1000;
     static constexpr int MAX_GENERATIONS = -1;
 
-    static constexpr emp::array<double, 2> SEQS{0.0, 1.0};
+    static constexpr std::array<double, 2> SEQS{0.0, 1.0};
 
     using TRAIT_TYPE = Trait;
-    using hardware_t = emp::EventDrivenGP_AW<TAG_WIDTH, TRAIT_TYPE>;
+    using hardware_t = emp::EventDrivenGP_AW<
+      TAG_WIDTH
+      , TRAIT_TYPE
+      , emp::MatchBin<
+        size_t
+        , emp::HammingMetric<16>
+        , emp::RankedSelector<std::ratio<24,16>>
+        >
+      >;
     using inst_lib_t = emp::InstLib<hardware_t>;
     using inst_t = hardware_t::Instruction;
     using event_lib_t = emp::EventLib<hardware_t>;
     using state_t = hardware_t::State;
-    using program_t = emp::EventDrivenGP_AW<TAG_WIDTH, TRAIT_TYPE>::Program;
+    using program_t = hardware_t::Program;
     using mutator_t = emp::SignalGPMutator<Config::TAG_WIDTH, Config::TRAIT_TYPE>;
 
     static constexpr double ARG_SUB__PER_ARG = 0.01;
