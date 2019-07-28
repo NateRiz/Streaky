@@ -33,11 +33,11 @@ public:
   }
   Analytics()=default;
   ~Analytics()=default;
-  
+
   void Update(){
     dfile.Update();
   }
-  
+
 private:
   emp::DataFile dfile = emp::DataFile("results.csv");
 

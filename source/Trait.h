@@ -9,10 +9,10 @@ class Sequence;
 
 struct Trait{
 public:
-  
-    Trait(); 
+
+    Trait();
     ~Trait()=default;
-    
+
     int guess;
     double fitness;
     emp::Ptr<Sequence> seq;
