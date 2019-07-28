@@ -91,10 +91,6 @@ void StreakyWorld::ConfigureWorld(){
           cfg,
           StreakyWorld::random,
           cfg.SEQS(seq)
-          // Uncomment the next line to change 0/1 to .5/.7-.9
-          // Harder sol't for genome
-          //(seq % 2 == 0 ? random.GetDouble(0.2, 0.4) + 0.5 : 0.5)
-          // 30/70 10/90% each bit is 0/1
         );
       }
     }
