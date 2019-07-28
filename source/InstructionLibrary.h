@@ -3,15 +3,16 @@
 #include "hardware/InstLib.h"
 
 #include "Config.h"
+#include "Sequence.h"
 
 class InstructionLibrary{
   public:
   InstructionLibrary()=default;
 
-  Config::inst_lib_t& CreateInstLib(emp::Random& random){
+  Config::inst_lib_t& CreateInstLib(const Config & cfg, emp::Random& random){
     inst_lib = Config::inst_lib_t();
     InitializeDefault();
-    InitializeCustom(random);
+    InitializeCustom(cfg, random);
     return inst_lib;
   }
 
@@ -47,7 +48,7 @@ class InstructionLibrary{
     inst_lib.AddInst("Nop", Config::hardware_t::Inst_Nop, 0, "No operation.");
     }
 
-    void InitializeCustom(emp::Random& random){
+    void InitializeCustom(const Config & cfg, emp::Random& random){
     inst_lib.AddInst(
      "Sense",
       [&](Config::hardware_t & hw, const Config::inst_t & inst) {
@@ -60,7 +61,7 @@ class InstructionLibrary{
       "Arg1 = Next in sequence."
     );
 
-    for (size_t idx = 0; idx < Config::SEQS.size(); ++idx) {
+    for (size_t idx = 0; idx < cfg.NSEQS(); ++idx) {
 
       inst_lib.AddInst(
         emp::to_string("GS_", idx),

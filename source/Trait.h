@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "base/Ptr.h"
 
 // forward declaration
@@ -17,5 +19,6 @@ public:
 
     //Analytics
     size_t senseCount;
-    emp::vector<size_t> guessCount;
+    std::unordered_map<size_t, size_t> guessCount;
+
 };

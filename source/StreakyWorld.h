@@ -1,14 +1,17 @@
 #pragma once
-#include "Config.h"
-#include "tools/Random.h"
-#include "Evolve/World.h"
-#include "Cell.h"
-#include "Analytics.h"
+
 #include "data/DataNode.h"
+#include "Evolve/World.h"
+#include "tools/Random.h"
+
+#include "Analytics.h"
+#include "Cell.h"
+#include "Config.h"
+
 
 class StreakyWorld: public emp::World<Cell>{
   public:
-    StreakyWorld();
+    StreakyWorld(const Config & cfg);
     void Restart();
     void Tick();
     void PrintCurrentState();
@@ -22,12 +25,13 @@ class StreakyWorld: public emp::World<Cell>{
     void PrintBestCell();
 
   private:
+    const Config & cfg;
     emp::Random random;
     Config::inst_lib_t inst_lib;
     Config::event_lib_t event_lib;
     Config::mutator_t mutator;
-  
-    emp::vector<emp::DataMonitor<double>> guessMonitors = emp::vector<emp::DataMonitor<double>>(Config::SEQS.size());
+
+    emp::vector<emp::DataMonitor<double>> guessMonitors;
     emp::DataMonitor<double> senseMonitor;
     emp::DataMonitor<double> fitnessMonitor;
     Analytics analytics;

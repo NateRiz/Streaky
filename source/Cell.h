@@ -7,9 +7,18 @@
 #include "Trait.h"
 
 struct Cell{
+private:
+  const Config & cfg;
+
 public:
-  Cell(Config::inst_lib_t& il, Config::event_lib_t& el, emp::Random& random, Config::mutator_t& mut)
-  : rand(random)
+  Cell(
+    const Config & cfg_,
+    Config::inst_lib_t& il,
+    Config::event_lib_t& el,
+    emp::Random& random,
+    Config::mutator_t& mut
+  ) : cfg(cfg_)
+  , rand(random)
   , hardware(il, el, &random)
   , mutator(mut)
   {
@@ -43,12 +52,12 @@ public:
 
     for (
       size_t t = 0;
-      t < Config::TICKS + rand.GetInt(Config::TICKS_NOISE);
+      t < cfg.TICKS_PER_TEST() + rand.GetInt(cfg.TICKS_NOISE()); //TODO
       ++t
     ) Tick();
 
     const double idx_guess = hardware.GetTrait().guess;
-    const double p_guess = (idx_guess == -1) ? idx_guess : Config::SEQS[idx_guess];
+    const double p_guess = (idx_guess == -1) ? idx_guess : cfg.SEQS(idx_guess);
 
     return (p_guess == -1 ? p_guess : p_guess == seq.P());
   }
@@ -76,9 +85,9 @@ public:
 
 private:
   void ConfigureHardware(){
-    hardware.SetMinBindThresh(Config::HW_MIN_SIM_THRESH);
-    hardware.SetMaxCores(Config::HW_MAX_THREADS);
-    hardware.SetMaxCallDepth(Config::HW_MAX_CALL_DEPTH);
+    hardware.SetMinBindThresh(cfg.HW_MIN_SIM_THRESH());
+    hardware.SetMaxCores(cfg.HW_MAX_THREADS());
+    hardware.SetMaxCallDepth(cfg.HW_MAX_CALL_DEPTH());
 
     // Create a way for the hardware to print our traits.
     auto trait_printer = [](std::ostream& os, Config::TRAIT_TYPE trait){

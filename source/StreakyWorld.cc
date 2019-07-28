@@ -1,25 +1,30 @@
 #pragma once
-#include "StreakyWorld.h"
-#include "hardware/EventDrivenGP.h"
-#include "InstructionLibrary.h"
 
-StreakyWorld::StreakyWorld()
+#include "hardware/EventDrivenGP.h"
+
+#include "Config.h"
+#include "InstructionLibrary.h"
+#include "StreakyWorld.h"
+
+StreakyWorld::StreakyWorld(const Config & cfg_)
   : World("StreakyWorld")
-  , random(Config::SEED)
-  , analytics(guessMonitors, senseMonitor, fitnessMonitor)
+  , cfg(cfg_)
+  , random(cfg_.SEED())
+  , guessMonitors(cfg.NSEQS())
+  , analytics(cfg_, guessMonitors, senseMonitor, fitnessMonitor)
 {
   MarkSynchronous(true);
   SetPopStruct_Mixed(true);
 
   InstructionLibrary il;
-  inst_lib = il.CreateInstLib(random);
+  inst_lib = il.CreateInstLib(cfg, random);
 
   ConfigureWorld();
 }
 
 void StreakyWorld::Start(){
   int gen = 0;
-  while (gen < Config::MAX_GENERATIONS || Config::MAX_GENERATIONS == -1) {
+  while (gen < cfg.MAX_GENERATIONS() || cfg.MAX_GENERATIONS() == -1) {
     ++gen;
     if(!(gen%50)) { std::cout << "GEN: " << gen << std::endl; }
     for (auto cell : pop){
@@ -48,8 +53,8 @@ void StreakyWorld::PrintBestCell(){
 
 void StreakyWorld::CreatePopulation(const unsigned int SAMPLES){
   for (unsigned int i = 0; i < SAMPLES; ++i){
-    Cell cell{inst_lib, event_lib, random, mutator};
-    Config::program_t prog = GenRandSignalGPProgram(random, inst_lib, 1, 16, 5, 32);
+    Cell cell{cfg, inst_lib, event_lib, random, mutator};
+    Config::program_t prog = emp::GenRandSignalGPProgram(random, inst_lib, 1, 16, 5, 32);
     cell.SetProgram(prog);
     cell.hardware.ResetHardware();
     Inject( cell );
@@ -61,30 +66,31 @@ void StreakyWorld::ConfigureWorld(){
   SetFitFun([&](const Cell& cell)->double{
       return cell.hardware.GetTrait().fitness;
   });
-  
+
   mutator.ResetMutators();
   // Setup other SignalGP functions.
-  mutator.ARG_SUB__PER_ARG(Config::ARG_SUB__PER_ARG);
-  mutator.INST_SUB__PER_INST(Config::INST_SUB__PER_INST);
-  mutator.INST_INS__PER_INST(Config::INST_INS__PER_INST);
-  mutator.INST_DEL__PER_INST(Config::INST_DEL__PER_INST);
-  mutator.SLIP__PER_FUNC(Config::SLIP__PER_FUNC);
-  mutator.FUNC_DUP__PER_FUNC(Config::FUNC_DUP__PER_FUNC);
-  mutator.FUNC_DEL__PER_FUNC(Config::FUNC_DEL__PER_FUNC);
-  mutator.TAG_BIT_FLIP__PER_BIT(Config::TAG_BIT_FLIP__PER_BIT);
-  
+  mutator.ARG_SUB__PER_ARG(cfg.ARG_SUB__PER_ARG());
+  mutator.INST_SUB__PER_INST(cfg.INST_SUB__PER_INST());
+  mutator.INST_INS__PER_INST(cfg.INST_INS__PER_INST());
+  mutator.INST_DEL__PER_INST(cfg.INST_DEL__PER_INST());
+  mutator.SLIP__PER_FUNC(cfg.SLIP__PER_FUNC());
+  mutator.FUNC_DUP__PER_FUNC(cfg.FUNC_DUP__PER_FUNC());
+  mutator.FUNC_DEL__PER_FUNC(cfg.FUNC_DEL__PER_FUNC());
+  mutator.TAG_BIT_FLIP__PER_BIT(cfg.TAG_BIT_FLIP__PER_BIT());
+
   SetMutFun([&](Cell& cell, emp::Random& random)->size_t{
     return mutator.ApplyMutations(cell.hardware.GetProgram(), random);
   });
 
   OnUpdate([&](size_t update)->void{
     emp::vector<Sequence> tests;
-    tests.reserve(Config::SEQ_REPS * Config::SEQS.size());
-    for (size_t seq = 0; seq < Config::SEQS.size(); ++seq) {
-      for (size_t rep = 0; rep < Config::SEQ_REPS; ++rep) {
+    tests.reserve(cfg.SEQ_REPS() * cfg.NSEQS());
+    for (size_t seq = 0; seq < cfg.NSEQS(); ++seq) {
+      for (size_t rep = 0; rep < cfg.SEQ_REPS(); ++rep) {
         tests.emplace_back(
+          cfg,
           StreakyWorld::random,
-          Config::SEQS[seq]
+          cfg.SEQS(seq)
           // Uncomment the next line to change 0/1 to .5/.7-.9
           // Harder sol't for genome
           //(seq % 2 == 0 ? random.GetDouble(0.2, 0.4) + 0.5 : 0.5)
@@ -95,14 +101,16 @@ void StreakyWorld::ConfigureWorld(){
 
     for(auto & cell : pop) {
       cell->CacheFitness(tests);
-      senseMonitor.Add((double)cell->hardware.GetTrait().senseCount / (double)Config::SEQ_REPS);
+      senseMonitor.Add((double)cell->hardware.GetTrait().senseCount / (double)cfg.SEQ_REPS());
       fitnessMonitor.Add(cell->hardware.GetTrait().fitness);
-      for(size_t i = 0; i < Config::SEQS.size(); ++i){
-        guessMonitors[i].Add((double)cell->hardware.GetTrait().guessCount[i] / (double)Config::SEQ_REPS);
+      for(size_t i = 0; i < cfg.NSEQS(); ++i){
+        guessMonitors[i].Add(
+          (double)cell->hardware.GetTrait().guessCount[i] / (double)cfg.SEQ_REPS()
+        );
       }
-      
+
       /// Reset the counts in the cell exept fitness which is done after selection.
-      for (size_t i = 0; i < Config::SEQS.size(); ++i){ cell->hardware.GetTrait().guessCount[i] = 0;}
+      cell->hardware.GetTrait().guessCount.clear();
       cell->hardware.GetTrait().senseCount = 0;
     }
 

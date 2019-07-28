@@ -10,6 +10,8 @@ class Sequence {
 
 private:
 
+  const Config &cfg;
+
   emp::vector<int> seq;
   emp::Random &rand;
 
@@ -17,11 +19,12 @@ private:
 
 public:
 
-  Sequence(emp::Random &rand_, const double p_switch_)
-  : rand(rand_)
+  Sequence(const Config & cfg_, emp::Random &rand_, const double p_switch_)
+  : cfg(cfg_)
+  , rand(rand_)
   , p_switch(p_switch_)
   {
-    seq.reserve(Config::TICKS + Config::TICKS_NOISE);
+    seq.reserve(cfg.TICKS_PER_TEST() + cfg.TICKS_NOISE());
     seq.push_back(rand.P(0.5));
   };
 

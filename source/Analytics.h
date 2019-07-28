@@ -1,13 +1,20 @@
+#include <string>
+
 #include "data/DataNode.h"
 #include "data/DataFile.h"
-#include <string>
+
+#include "Config.h"
 
 class Analytics{
 
 public:
-  Analytics(emp::vector<emp::DataMonitor<double>>& guessMonitors, emp::DataMonitor<double>& senseMonitor, emp::DataMonitor<double>& fitnessMonitor){
-    dfile.SetupLine("",",","\n");
-   
+  Analytics(
+    const Config & cfg,
+    emp::vector<emp::DataMonitor<double>>& guessMonitors, emp::DataMonitor<double>& senseMonitor,
+    emp::DataMonitor<double>& fitnessMonitor
+  ){
+    dfile.SetupLine("",",","\n"); //TODO
+
     dfile.AddMin(senseMonitor, "Minimum Sense Count");
     dfile.AddMax(senseMonitor, "Maximum Sense Count");
     dfile.AddMean(senseMonitor, "Mean Sense Count");
