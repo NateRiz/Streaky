@@ -52,9 +52,8 @@ class InstructionLibrary{
     inst_lib.AddInst(
      "Sense",
       [&](Config::hardware_t & hw, const Config::inst_t & inst) {
-        hw.GetTrait().senseCount+=1;
         Config::state_t& state = hw.GetCurState();
-        const int cur = hw.GetTrait().seq->Get(hw.GetTrait().senseCount);
+        const int cur = hw.GetTrait().seq->Get(hw.GetTrait().senseCount++);
         state.SetLocal(inst.args[0], cur);
       },
       1,
