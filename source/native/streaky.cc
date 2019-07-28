@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
         hardware.SetTrait(trait);
         hardware.ResetHardware();
         hardware.SpawnCore(0);
-        Sequence sequence(cfg, random, i%2);
+        Sequence sequence(cfg, random, cfg.SEQS(i%cfg.NSEQS()));
         hardware.GetTrait().seq = &sequence;
 
         for(size_t j = 0; j < cfg.RUN_TICKS(); ++j){
