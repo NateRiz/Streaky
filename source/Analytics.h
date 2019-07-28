@@ -2,6 +2,7 @@
 
 #include "data/DataNode.h"
 #include "data/DataFile.h"
+#include "tools/keyname_utils.h"
 
 #include "Config.h"
 
@@ -12,7 +13,16 @@ public:
     const Config & cfg,
     emp::vector<emp::DataMonitor<double>>& guessMonitors, emp::DataMonitor<double>& senseMonitor,
     emp::DataMonitor<double>& fitnessMonitor
-  ){
+  ) : dfile(
+      emp::keyname::pack({
+        {"treatment", cfg.TREATMENT()},
+        {"seed", emp::to_string(cfg.SEED())},
+        // {"_emp_hash=", STRINGIFY(EMPIRICAL_HASH_)},
+        // {"_source_hash=", STRINGIFY(DISHTINY_HASH_)},
+        {"ext", ".csv"}
+      })
+    )
+  {
     dfile.SetupLine("",",","\n"); //TODO
 
     dfile.AddMin(senseMonitor, "Minimum Sense Count");
@@ -39,6 +49,6 @@ public:
   }
 
 private:
-  emp::DataFile dfile = emp::DataFile("results.csv");
+  emp::DataFile dfile;
 
 };
