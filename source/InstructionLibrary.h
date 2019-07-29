@@ -3,15 +3,16 @@
 #include "hardware/InstLib.h"
 
 #include "Config.h"
+#include "Sequence.h"
 
 class InstructionLibrary{
   public:
   InstructionLibrary()=default;
 
-  Config::inst_lib_t& CreateInstLib(emp::Random& random){
+  Config::inst_lib_t& CreateInstLib(const Config & cfg, emp::Random& random){
     inst_lib = Config::inst_lib_t();
     InitializeDefault();
-    InitializeCustom(random);
+    InitializeCustom(cfg, random);
     return inst_lib;
   }
 
@@ -42,25 +43,24 @@ class InstructionLibrary{
     inst_lib.AddInst("Output", Config::hardware_t::Inst_Output, 2, "Local memory Arg1 => Output memory Arg2.");
     inst_lib.AddInst("Commit", Config::hardware_t::Inst_Commit, 2, "Local memory Arg1 => Shared memory Arg2.");
     inst_lib.AddInst("Pull", Config::hardware_t::Inst_Pull, 2, "Shared memory Arg1 => Shared memory Arg2.");
-    //inst_lib.AddInst("Fork", Config::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
+    inst_lib.AddInst("Fork", Config::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
     inst_lib.AddInst("Terminate", Config::hardware_t::Inst_Terminate, 0, "Terminate current thread.");
     inst_lib.AddInst("Nop", Config::hardware_t::Inst_Nop, 0, "No operation.");
     }
 
-    void InitializeCustom(emp::Random& random){
+    void InitializeCustom(const Config & cfg, emp::Random& random){
     inst_lib.AddInst(
      "Sense",
       [&](Config::hardware_t & hw, const Config::inst_t & inst) {
-        hw.GetTrait().senseCount+=1;
         Config::state_t& state = hw.GetCurState();
-        const int cur = hw.GetTrait().seq->Get(hw.GetTrait().senseCount);
+        const int cur = hw.GetTrait().seq->Get(hw.GetTrait().senseCount++);
         state.SetLocal(inst.args[0], cur);
       },
       1,
       "Arg1 = Next in sequence."
     );
 
-    for (size_t idx = 0; idx < Config::SEQS.size(); ++idx) {
+    for (size_t idx = 0; idx < cfg.NSEQS(); ++idx) {
 
       inst_lib.AddInst(
         emp::to_string("GS_", idx),

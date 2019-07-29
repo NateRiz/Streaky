@@ -1,13 +1,30 @@
+#include <string>
+
 #include "data/DataNode.h"
 #include "data/DataFile.h"
-#include <string>
+#include "tools/keyname_utils.h"
+
+#include "Config.h"
 
 class Analytics{
 
 public:
-  Analytics(emp::vector<emp::DataMonitor<double>>& guessMonitors, emp::DataMonitor<double>& senseMonitor, emp::DataMonitor<double>& fitnessMonitor){
-    dfile.SetupLine("",",","\n");
-   
+  Analytics(
+    const Config & cfg,
+    emp::vector<emp::DataMonitor<double>>& guessMonitors, emp::DataMonitor<double>& senseMonitor,
+    emp::DataMonitor<double>& fitnessMonitor
+  ) : dfile(
+      emp::keyname::pack({
+        {"treatment", cfg.TREATMENT()},
+        {"seed", emp::to_string(cfg.SEED())},
+        // {"_emp_hash=", STRINGIFY(EMPIRICAL_HASH_)},
+        // {"_source_hash=", STRINGIFY(DISHTINY_HASH_)},
+        {"ext", ".csv"}
+      })
+    )
+  {
+    dfile.SetupLine("",",","\n"); //TODO
+
     dfile.AddMin(senseMonitor, "Minimum Sense Count");
     dfile.AddMax(senseMonitor, "Maximum Sense Count");
     dfile.AddMean(senseMonitor, "Mean Sense Count");
@@ -26,12 +43,12 @@ public:
   }
   Analytics()=default;
   ~Analytics()=default;
-  
+
   void Update(){
     dfile.Update();
   }
-  
+
 private:
-  emp::DataFile dfile = emp::DataFile("results.csv");
+  emp::DataFile dfile;
 
 };
