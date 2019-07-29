@@ -1,9 +1,10 @@
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
 
 sns.set()
-data = pd.read_csv("results.csv")
+data = pd.read_csv(sys.argv[1])
 
 sense = data[["Minimum Sense Count", "Maximum Sense Count", "Mean Sense Count"]]
 ax = sns.lineplot(data=sense)
