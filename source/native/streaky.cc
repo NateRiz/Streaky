@@ -11,6 +11,7 @@
 #include "config/ArgManager.h"
 
 #include "../Config.h"
+#include "../ConfigHardware.h"
 #include "../StreakyWorld.cc"
 #include "../Trait.cc"
 
@@ -60,23 +61,45 @@ int main(int argc, char* argv[])
 
   while (res->size()) {
 
-    if (res->back() == "evolve") {
+    if (res->back() == "evolve-ranked") {
 
       std::cout << "running mode: " << res->back() << std::endl;
-      StreakyWorld streakyWorld(cfg);
-      streakyWorld.CreatePopulation(cfg.POP_SIZE());
-      streakyWorld.Start();
+      StreakyWorld<
+        ConfigHardware<
+          emp::HammingMetric<16>,
+          emp::RankedSelector<std::ratio<24,16>>
+        >
+      > rankedWorld(cfg);
+      rankedWorld.CreatePopulation(cfg.POP_SIZE());
+      rankedWorld.Start();
+      std::cout << "DONE." << std::endl;
+
+    } else if (res->back() == "evolve-roulette") {
+
+      std::cout << "running mode: " << res->back() << std::endl;
+      // StreakyWorld<
+      //   ConfigHardware<
+      //     emp::StreakMetric<16>,
+      //     emp::RouletteSelector<>
+      //   >
+      // > rouletteWorld(cfg);
+      // rouletteWorld.CreatePopulation(cfg.POP_SIZE());
+      // rouletteWorld.Start();
       std::cout << "DONE." << std::endl;
 
     } else if (res->back() == "run-program") {
 
       std::cout << "running mode: " << res->back() << std::endl;
       emp::Random random(1);
-      InstructionLibrary il;
-      Config::inst_lib_t& inst_lib = il.CreateInstLib(cfg, random);
-      Config::event_lib_t event_lib;
+      using CH = ConfigHardware<
+        emp::HammingMetric<16>,
+        emp::RankedSelector<std::ratio<24,16>>
+      >;
+      InstructionLibrary<CH> il;
+      CH::inst_lib_t& inst_lib = il.CreateInstLib(cfg, random);
+      CH::event_lib_t event_lib;
 
-      Config::hardware_t hardware(inst_lib, event_lib, &random);
+      CH::hardware_t hardware(inst_lib, event_lib, &random);
       std::ifstream prog (cfg.PROGRAM_FILENAME());
       hardware.GetProgram().Load(prog);
       prog.close();

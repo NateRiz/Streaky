@@ -6,6 +6,7 @@
 #include "Sequence.h"
 #include "Trait.h"
 
+template <typename CH>
 struct Cell{
 private:
   const Config & cfg;
@@ -13,10 +14,10 @@ private:
 public:
   Cell(
     const Config & cfg_,
-    Config::inst_lib_t& il,
-    Config::event_lib_t& el,
+    typename CH::inst_lib_t& il,
+    typename CH::event_lib_t& el,
     emp::Random& random,
-    Config::mutator_t& mut
+    typename CH::mutator_t& mut
   ) : cfg(cfg_)
   , rand(random)
   , hardware(il, el, &random)
@@ -42,7 +43,7 @@ public:
     std::cout <<"\n\n";
   }
 
-  void SetProgram(Config::program_t program){
+  void SetProgram(typename CH::program_t program){
     hardware.SetProgram(program);
   }
 
@@ -80,8 +81,8 @@ public:
 
 public:
     emp::Random &rand;
-    Config::hardware_t hardware;
-    Config::mutator_t mutator;
+    typename CH::hardware_t hardware;
+    typename CH::mutator_t mutator;
 
 private:
   void ConfigureHardware(){
@@ -90,7 +91,9 @@ private:
     hardware.SetMaxCallDepth(cfg.HW_MAX_CALL_DEPTH());
 
     // Create a way for the hardware to print our traits.
-    auto trait_printer = [](std::ostream& os, Config::TRAIT_TYPE trait){
+    auto trait_printer = [](
+      std::ostream& os, typename CH::TRAIT_TYPE trait
+    ){
       os << "[SF: " << trait.seq->P()
          << " -- G: " << trait.guess << "]"
          << std::endl;
