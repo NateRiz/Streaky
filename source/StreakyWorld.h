@@ -8,16 +8,17 @@
 #include "Cell.h"
 #include "Config.h"
 
-
-class StreakyWorld: public emp::World<Cell>{
+template<typename CH>
+class StreakyWorld: public emp::World<Cell<CH>> {
   public:
+
     StreakyWorld(const Config & cfg);
     void Restart();
     void Tick();
     void PrintCurrentState();
     void CreatePopulation(const unsigned int SAMPLES);
     void Start();
-    double GetFitness(Cell& cell);
+    double GetFitness(Cell<CH>& cell);
 
   private:
     void ConfigureHardware();
@@ -27,9 +28,9 @@ class StreakyWorld: public emp::World<Cell>{
   private:
     const Config & cfg;
     emp::Random random;
-    Config::inst_lib_t inst_lib;
-    Config::event_lib_t event_lib;
-    Config::mutator_t mutator;
+    typename CH::inst_lib_t inst_lib;
+    typename CH::event_lib_t event_lib;
+    typename CH::mutator_t mutator;
 
     emp::vector<emp::DataMonitor<double>> guessMonitors;
     emp::DataMonitor<double> senseMonitor;
