@@ -73,10 +73,11 @@ public:
 
   void CacheFitness(emp::vector<Sequence> & seqs) {
     int fit = EvalSequences(seqs);
-    if ( fit == (int) seqs.size() ) {
-      fit += 10000 - hardware.GetConstProgram().GetInstCnt();
-    }
     hardware.GetTrait().fitness = fit;
+
+    if ( fit == (int) seqs.size() ) {
+      hardware.GetTrait().fitness += (512.0 - (double)hardware.GetProgram().GetInstCnt()) / 100.0;
+    }
   }
 
 public:
