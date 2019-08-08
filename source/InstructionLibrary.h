@@ -47,14 +47,14 @@ class InstructionLibrary{
     inst_lib.AddInst("Output", CH::hardware_t::Inst_Output, 2, "Local memory Arg1 => Output memory Arg2.");
     inst_lib.AddInst("Commit", CH::hardware_t::Inst_Commit, 2, "Local memory Arg1 => Shared memory Arg2.");
     inst_lib.AddInst("Pull", CH::hardware_t::Inst_Pull, 2, "Shared memory Arg1 => Shared memory Arg2.");
-    //inst_lib.AddInst("Fork", CH::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
+    inst_lib.AddInst("Fork", CH::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
     inst_lib.AddInst("Terminate", CH::hardware_t::Inst_Terminate, 0, "Terminate current thread.");
     inst_lib.AddInst("Nop", CH::hardware_t::Inst_Nop, 0, "No operation.");
     }
 
     void InitializeCustom(const Config & cfg, emp::Random& random){
-    inst_lib.AddInst("SetReg", CH::hardware_t::Inst_SetRegulator, 2, "Set Matchbin Regulator at id: Arg1 to Arg2");
-    inst_lib.AddInst("AdjReg", CH::hardware_t::Inst_AdjRegulator, 2, "Adjust Matchbin Regulator at id: Arg1 to Arg2");
+    inst_lib.AddInst("SetReg", CH::hardware_t::Inst_SetRegulator, 1, "Set Matchbin Regulator to Arg1");
+    inst_lib.AddInst("AdjReg", CH::hardware_t::Inst_AdjRegulator, 1, "Adjust Matchbin Regulator to Arg1");
     inst_lib.AddInst(
      "Sense",
       [&](
