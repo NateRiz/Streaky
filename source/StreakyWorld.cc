@@ -11,7 +11,7 @@ StreakyWorld<CH>::StreakyWorld(const Config & cfg_)
   : cfg(cfg_)
   , random(cfg_.SEED())
   , guessMonitors(cfg.NSEQS())
-  , analytics(cfg_, guessMonitors, senseMonitor, fitnessMonitor, funCallCountMonitor)
+  , analytics(cfg_, guessMonitors, senseMonitor, fitnessMonitor, funCallCountMonitor, funForkCountMonitor, funTotalCallMonitor)
 {
   this->MarkSynchronous(true);
   this->SetPopStruct_Mixed(true);
@@ -103,6 +103,8 @@ void StreakyWorld<CH>::ConfigureWorld(){
       cell->CacheFitness(tests);
       senseMonitor.Add((double)cell->hardware.GetTrait().senseCount / (double)cfg.SEQ_REPS());
       funCallCountMonitor.Add(cell->hardware.GetTrait().funCallCount);
+      funForkCountMonitor.Add(cell->hardware.GetTrait().funForkCount);
+      funTotalCallMonitor.Add(cell->hardware.GetTrait().funCallCount+cell->hardware.GetTrait().funForkCount);
       fitnessMonitor.Add((double)cell->hardware.GetTrait().fitness);
       for(size_t i = 0; i < cfg.NSEQS(); ++i){
         guessMonitors[i].Add(
@@ -112,6 +114,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
 
       /// Reset the counts in the cell exept fitness which is done after selection.
       cell->hardware.GetTrait().funCallCount = 0;
+      cell->hardware.GetTrait().funForkCount = 0;
       cell->hardware.GetTrait().guessCount.clear();
       cell->hardware.GetTrait().senseCount = 0;
     }
@@ -120,6 +123,8 @@ void StreakyWorld<CH>::ConfigureWorld(){
     senseMonitor.Reset();
     fitnessMonitor.Reset();
     funCallCountMonitor.Reset();
+    funForkCountMonitor.Reset();
+    funTotalCallMonitor.Reset();
     for (size_t i = 0; i < guessMonitors.size(); ++i){
       guessMonitors[i].Reset();
     }

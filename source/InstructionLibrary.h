@@ -96,7 +96,7 @@ class InstructionLibrary{
     inst_lib.AddInst(
         "Fork",
         [&](typename CH::hardware_t hw, const typename CH::inst_t& inst){
-          hw.GetTrait().funCallCount+=1;
+          hw.GetTrait().funForkCount+=1;
           CH::hardware_t::Inst_Fork(hw, inst);
         },
         0,

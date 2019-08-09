@@ -7,5 +7,6 @@ Trait::Trait()
   : guess(-1)
   , fitness(0)
   , funCallCount(0)
+  , funForkCount(0)
   , senseCount(0)
   { ; }

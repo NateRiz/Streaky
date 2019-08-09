@@ -15,6 +15,8 @@ public:
     , emp::DataMonitor<double>& senseMonitor
     , emp::DataMonitor<double>& fitnessMonitor
     , emp::DataMonitor<double>& funCallCountMonitor
+    , emp::DataMonitor<double>& funForkCountMonitor
+    , emp::DataMonitor<double>& funTotalCallMonitor
   ) : dfile(
       emp::keyname::pack({
         {"treatment", cfg.TREATMENT()},
@@ -35,9 +37,18 @@ public:
     dfile.AddMax(fitnessMonitor, "Maximum Fitness");
     dfile.AddMean(fitnessMonitor, "Mean Fitness");
     
-    dfile.AddMin(funCallCountMonitor, "Min Fx Calls");
-    dfile.AddMax(funCallCountMonitor, "Max Fx Calls");
-    dfile.AddMean(funCallCountMonitor, "Mean Fx Calls");
+    dfile.AddMin(funCallCountMonitor, "Minimum Function Calls");
+    dfile.AddMax(funCallCountMonitor, "Maximum Function Calls");
+    dfile.AddMean(funCallCountMonitor, "Mean Function Calls");
+    
+    dfile.AddMin(funForkCountMonitor, "Minimum Function Forks");
+    dfile.AddMax(funForkCountMonitor, "Maximum Function Forks");
+    dfile.AddMean(funForkCountMonitor, "Mean Function Forks");
+ 
+    dfile.AddMin(funTotalCallMonitor, "Minimum Function Calls & Forks");
+    dfile.AddMax(funTotalCallMonitor, "Maximum Function Calls & Forks");
+    dfile.AddMean(funTotalCallMonitor, "Mean Function Calls & Forks");
+
 
     for (size_t i = 0; i < guessMonitors.size(); ++i){
       dfile.AddMin(guessMonitors[i], "Minimum Guess"+std::to_string(i)+" Count");
