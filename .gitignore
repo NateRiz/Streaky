@@ -14,6 +14,7 @@
 *.wast
 *-bak.cc
 *tmp.*
+*.csv
 
 .DS_Store
 a.out
