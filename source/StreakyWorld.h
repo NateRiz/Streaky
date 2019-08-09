@@ -35,9 +35,10 @@ class StreakyWorld: public emp::World<Cell<CH>> {
     emp::vector<emp::DataMonitor<double>> guessMonitors;
     emp::DataMonitor<double> senseMonitor;
     emp::DataMonitor<double> fitnessMonitor;
+    emp::DataMonitor<double> funCallCountMonitor; 
     Analytics analytics;
 
-    int bestFitness = -10;
+    double bestFitness = -10;
 
 
 };

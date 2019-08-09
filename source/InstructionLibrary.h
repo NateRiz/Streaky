@@ -38,7 +38,6 @@ class InstructionLibrary{
     inst_lib.AddInst("Countdown", CH::hardware_t::Inst_Countdown, 1, "Local memory: Countdown Arg1 to zero.", emp::ScopeType::BASIC, 0, {"block_def"});
     inst_lib.AddInst("Close", CH::hardware_t::Inst_Close, 0, "Close current block if there is a block to close.", emp::ScopeType::BASIC, 0, {"block_close"});
     inst_lib.AddInst("Break", CH::hardware_t::Inst_Break, 0, "Break out of current block.");
-    inst_lib.AddInst("Call", CH::hardware_t::Inst_Call, 0, "Call function that best matches call affinity.", emp::ScopeType::BASIC, 0, {"affinity"});
     inst_lib.AddInst("Return", CH::hardware_t::Inst_Return, 0, "Return from current function if possible.");
     inst_lib.AddInst("SetMem", CH::hardware_t::Inst_SetMem, 2, "Local memory: Arg1 = numerical value of Arg2");
     inst_lib.AddInst("CopyMem", CH::hardware_t::Inst_CopyMem, 2, "Local memory: Arg1 = Arg2");
@@ -47,7 +46,6 @@ class InstructionLibrary{
     inst_lib.AddInst("Output", CH::hardware_t::Inst_Output, 2, "Local memory Arg1 => Output memory Arg2.");
     inst_lib.AddInst("Commit", CH::hardware_t::Inst_Commit, 2, "Local memory Arg1 => Shared memory Arg2.");
     inst_lib.AddInst("Pull", CH::hardware_t::Inst_Pull, 2, "Shared memory Arg1 => Shared memory Arg2.");
-    inst_lib.AddInst("Fork", CH::hardware_t::Inst_Fork, 0, "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
     inst_lib.AddInst("Terminate", CH::hardware_t::Inst_Terminate, 0, "Terminate current thread.");
     inst_lib.AddInst("Nop", CH::hardware_t::Inst_Nop, 0, "No operation.");
     }
@@ -86,6 +84,23 @@ class InstructionLibrary{
 
     }
 
+    inst_lib.AddInst(
+        "Call",
+        [&](typename CH::hardware_t& hw, const typename CH::inst_t& inst){
+          hw.GetTrait().funCallCount+=1;
+          CH::hardware_t::Inst_Call(hw, inst);
+        },
+        0,
+        "Call function that best matches call affinity.", emp::ScopeType::BASIC, 0, {"affinity"});
+    
+    inst_lib.AddInst(
+        "Fork",
+        [&](typename CH::hardware_t hw, const typename CH::inst_t& inst){
+          hw.GetTrait().funCallCount+=1;
+          CH::hardware_t::Inst_Fork(hw, inst);
+        },
+        0,
+        "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
     //inst_lib.AddInst("Debug",[](CH::hardware_t& hw, const CH::inst_t& inst){CH::state_t& state = hw.GetCurState(); std::cout << state.GetLocal(inst.args[0])<<std::endl;},1,"debug");
     }
   private:

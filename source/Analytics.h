@@ -10,9 +10,11 @@ class Analytics{
 
 public:
   Analytics(
-    const Config & cfg,
-    emp::vector<emp::DataMonitor<double>>& guessMonitors, emp::DataMonitor<double>& senseMonitor,
-    emp::DataMonitor<double>& fitnessMonitor
+    const Config & cfg
+    , emp::vector<emp::DataMonitor<double>>& guessMonitors
+    , emp::DataMonitor<double>& senseMonitor
+    , emp::DataMonitor<double>& fitnessMonitor
+    , emp::DataMonitor<double>& funCallCountMonitor
   ) : dfile(
       emp::keyname::pack({
         {"treatment", cfg.TREATMENT()},
@@ -32,6 +34,10 @@ public:
     dfile.AddMin(fitnessMonitor, "Minimum Fitness");
     dfile.AddMax(fitnessMonitor, "Maximum Fitness");
     dfile.AddMean(fitnessMonitor, "Mean Fitness");
+    
+    dfile.AddMin(funCallCountMonitor, "Min Fx Calls");
+    dfile.AddMax(funCallCountMonitor, "Max Fx Calls");
+    dfile.AddMean(funCallCountMonitor, "Mean Fx Calls");
 
     for (size_t i = 0; i < guessMonitors.size(); ++i){
       dfile.AddMin(guessMonitors[i], "Minimum Guess"+std::to_string(i)+" Count");

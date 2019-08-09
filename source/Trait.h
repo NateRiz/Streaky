@@ -15,6 +15,7 @@ public:
 
     int guess;
     double fitness;
+    size_t funCallCount;
     emp::Ptr<Sequence> seq;
 
     //Analytics
