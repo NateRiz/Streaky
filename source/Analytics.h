@@ -21,8 +21,8 @@ public:
       emp::keyname::pack({
         {"treatment", cfg.TREATMENT()},
         {"seed", emp::to_string(cfg.SEED())},
-        // {"_emp_hash=", STRINGIFY(EMPIRICAL_HASH_)},
-        // {"_source_hash=", STRINGIFY(DISHTINY_HASH_)},
+        {"SEQ_A", emp::to_string(cfg.SEQ_A())},
+        {"SEQ_B",emp::to_string(cfg.SEQ_B())},
         {"ext", ".csv"}
       })
     )
