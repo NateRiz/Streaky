@@ -32,12 +32,12 @@ class StreakyWorld: public emp::World<Cell<CH>> {
     typename CH::event_lib_t event_lib;
     typename CH::mutator_t mutator;
 
-    emp::vector<emp::DataMonitor<double>> guessMonitors;
-    emp::DataMonitor<double> senseMonitor;
-    emp::DataMonitor<double> fitnessMonitor;
-    emp::DataMonitor<double> funCallCountMonitor; 
-    emp::DataMonitor<double> funForkCountMonitor;
-    emp::DataMonitor<double> funTotalCallMonitor;
+    emp::vector<emp::DataMonitor<double, emp::data::Log>> guessMonitors;
+    emp::DataMonitor<double, emp::data::Log> senseMonitor;
+    emp::DataMonitor<double, emp::data::Log> fitnessMonitor;
+    emp::DataMonitor<double, emp::data::Log> funCallCountMonitor; 
+    emp::DataMonitor<double, emp::data::Log> funForkCountMonitor;
+    emp::DataMonitor<double, emp::data::Log> funTotalCallMonitor;
     Analytics analytics;
     
     double bestFitness;

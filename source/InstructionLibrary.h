@@ -95,13 +95,13 @@ class InstructionLibrary{
     
     inst_lib.AddInst(
         "Fork",
-        [&](typename CH::hardware_t hw, const typename CH::inst_t& inst){
+        [&](typename CH::hardware_t& hw, const typename CH::inst_t& inst){
           hw.GetTrait().funForkCount+=1;
           CH::hardware_t::Inst_Fork(hw, inst);
         },
         0,
         "Fork a new thread, using tag-based referencing to determine which function to call on the new thread.", emp::ScopeType::BASIC, 0, {"affinity"});
-    //inst_lib.AddInst("Debug",[](CH::hardware_t& hw, const CH::inst_t& inst){CH::state_t& state = hw.GetCurState(); std::cout << state.GetLocal(inst.args[0])<<std::endl;},1,"debug");
+    //inst_lib.AddInst("Debug",[](typename CH::hardware_t& hw, const typename CH::inst_t& inst){std::cout <<"~"<< hw.GetTrait().funForkCount <<std::endl;},1,"debug");
     }
   private:
     typename CH::inst_lib_t inst_lib;

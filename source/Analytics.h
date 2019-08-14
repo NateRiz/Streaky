@@ -11,12 +11,12 @@ class Analytics{
 public:
   Analytics(
     const Config & cfg
-    , emp::vector<emp::DataMonitor<double>>& guessMonitors
-    , emp::DataMonitor<double>& senseMonitor
-    , emp::DataMonitor<double>& fitnessMonitor
-    , emp::DataMonitor<double>& funCallCountMonitor
-    , emp::DataMonitor<double>& funForkCountMonitor
-    , emp::DataMonitor<double>& funTotalCallMonitor
+    , emp::vector<emp::DataMonitor<double, emp::data::Log>>& guessMonitors
+    , emp::DataMonitor<double, emp::data::Log>& senseMonitor
+    , emp::DataMonitor<double, emp::data::Log>& fitnessMonitor
+    , emp::DataMonitor<double, emp::data::Log>& funCallCountMonitor
+    , emp::DataMonitor<double, emp::data::Log>& funForkCountMonitor
+    , emp::DataMonitor<double, emp::data::Log>& funTotalCallMonitor
   ) : dfile(
       emp::keyname::pack({
         {"treatment", cfg.TREATMENT()},
@@ -32,28 +32,34 @@ public:
     dfile.AddMin(senseMonitor, "Minimum Sense Count");
     dfile.AddMax(senseMonitor, "Maximum Sense Count");
     dfile.AddMean(senseMonitor, "Mean Sense Count");
+    dfile.AddMedian(senseMonitor, "Median Sense Count");
 
     dfile.AddMin(fitnessMonitor, "Minimum Fitness");
     dfile.AddMax(fitnessMonitor, "Maximum Fitness");
     dfile.AddMean(fitnessMonitor, "Mean Fitness");
+    dfile.AddMedian(fitnessMonitor, "Median Fitness");
     
     dfile.AddMin(funCallCountMonitor, "Minimum Function Calls");
     dfile.AddMax(funCallCountMonitor, "Maximum Function Calls");
     dfile.AddMean(funCallCountMonitor, "Mean Function Calls");
+    dfile.AddMedian(funCallCountMonitor, "Median Function Calls");
     
     dfile.AddMin(funForkCountMonitor, "Minimum Function Forks");
     dfile.AddMax(funForkCountMonitor, "Maximum Function Forks");
     dfile.AddMean(funForkCountMonitor, "Mean Function Forks");
+    dfile.AddMedian(funForkCountMonitor, "Median Function Forks");
  
     dfile.AddMin(funTotalCallMonitor, "Minimum Function Calls & Forks");
     dfile.AddMax(funTotalCallMonitor, "Maximum Function Calls & Forks");
     dfile.AddMean(funTotalCallMonitor, "Mean Function Calls & Forks");
+    dfile.AddMedian(funTotalCallMonitor, "Median Function Calls & Forks");
 
 
     for (size_t i = 0; i < guessMonitors.size(); ++i){
       dfile.AddMin(guessMonitors[i], "Minimum Guess"+std::to_string(i)+" Count");
       dfile.AddMax(guessMonitors[i], "Maximum Guess"+std::to_string(i)+" Count" );
       dfile.AddMean(guessMonitors[i], "Mean Guess"+std::to_string(i)+" Count");
+      dfile.AddMedian(guessMonitors[i], "Median Guess"+std::to_string(i)+" Count");
     }
     dfile.PrintHeaderKeys();
 
@@ -67,5 +73,4 @@ public:
 
 private:
   emp::DataFile dfile;
-
 };
