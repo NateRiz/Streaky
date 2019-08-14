@@ -17,6 +17,9 @@ EMP_BUILD_CONFIG(
   VALUE(CONFIG_FILENAME, std::string, "configs.cfg", "Default config filename"),
   VALUE(PROGRAM_FILENAME, std::string, "program.txt", "Default program filename"),
 
+  GROUP(MATH, "Math Constants"),
+  VALUE(EPSILON, double, 0.00001, "Epsilon"),
+
   GROUP(RUN_PROGRAM, "Run program settings"),
   VALUE(RUN_REPS, size_t, 30, "TODO"),
   VALUE(RUN_TICKS, size_t, 300000, "TODO"),

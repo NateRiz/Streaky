@@ -15,17 +15,6 @@
 #include "../StreakyWorld.cc"
 #include "../Trait.cc"
 
-/**
- *
- * 10101010101010101010
- * 11110000111100001111
- *
- *
- *
- *
- */
-
-
 // This is the main function for the NATIVE version of Streaky.
 int main(int argc, char* argv[])
 {
@@ -77,14 +66,14 @@ int main(int argc, char* argv[])
     } else if (res->back() == "evolve-roulette") {
 
       std::cout << "running mode: " << res->back() << std::endl;
-      // StreakyWorld<
-      //   ConfigHardware<
-      //     emp::StreakMetric<16>,
-      //     emp::RouletteSelector<>
-      //   >
-      // > rouletteWorld(cfg);
-      // rouletteWorld.CreatePopulation(cfg.POP_SIZE());
-      // rouletteWorld.Start();
+       StreakyWorld<
+         ConfigHardware<
+           emp::StreakMetric<16>,
+           emp::RouletteSelector<>
+         >
+       > rouletteWorld(cfg);
+       rouletteWorld.CreatePopulation(cfg.POP_SIZE());
+       rouletteWorld.Start();
       std::cout << "DONE." << std::endl;
 
     } else if (res->back() == "run-program") {
@@ -118,7 +107,7 @@ int main(int argc, char* argv[])
 
       }
 
-    } else std::cout << "uknown running mode: " << res->back() << std::endl;
+    } else std::cout << "unknown running mode: " << res->back() << std::endl;
 
     res->pop_back();
 

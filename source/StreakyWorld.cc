@@ -13,6 +13,8 @@ StreakyWorld<CH>::StreakyWorld(const Config & cfg_)
   , guessMonitors(cfg.NSEQS())
   , analytics(cfg_, guessMonitors, senseMonitor, fitnessMonitor, funCallCountMonitor, funForkCountMonitor, funTotalCallMonitor)
 {
+  bestFitness = -1*(double)(cfg.NSEQS()*cfg.SEQ_REPS())-1;
+  bestCell = nullptr;
   this->MarkSynchronous(true);
   this->SetPopStruct_Mixed(true);
 
@@ -33,24 +35,15 @@ void StreakyWorld<CH>::Start(){
     }
     this->Update();
     this->DoMutations();
-    this->PrintBestCell();
   }
-  analytics.Update();
+
+  analytics.Update();//TODO why are there two of these? Does it need to udate one last time?
 }
 
 template <typename CH>
 void StreakyWorld<CH>::PrintBestCell(){
-  Cell<CH>* bestCell = this->pop[0];
-  for (unsigned int i = 0 ; i < this->GetNumOrgs(); ++i){
-    double fitness = this->CalcFitnessOrg(*this->pop[i]);
-    if (fitness > bestFitness){
-      bestFitness = fitness;
-      bestCell = this->pop[i];
-      bestCell->hardware.PrintProgram();
-      bestCell->hardware.PrintProgramFull();
-      std::cout << "Finished with Fitness: " << bestFitness << std::endl;
-    }
-  }
+  bestCell->hardware.PrintProgram();
+  bestCell->hardware.PrintProgramFull();
 }
 
 template <typename CH>
@@ -98,20 +91,44 @@ void StreakyWorld<CH>::ConfigureWorld(){
         );
       }
     }
-
+    emp::vector<Cell<CH>*> curGenBestCells {};
+    double curGenBestFitness = -1*(double)(cfg.SEQ_REPS() * cfg.NSEQS()) - 1;
+    curGenBestCells.push_back(this->pop[0]);
     for(auto & cell : this->pop) {
       cell->CacheFitness(tests);
+      double fitness = cell->hardware.GetTrait().fitness;
+      
+      if (abs(fitness - curGenBestFitness) < cfg.EPSILON()){
+        curGenBestCells.push_back(cell);
+      }
+      else if (fitness > curGenBestFitness){
+        curGenBestCells.resize(1);
+        curGenBestCells[0] = cell;  
+      }
+      if (fitness > bestFitness){
+        bestCell = cell;
+        bestFitness = fitness;
+        this->PrintBestCell();
+        std::cout<<"New Best Fitness: "<<fitness <<std::endl;
+      }
+
+      curGenBestFitness = std::max(fitness, curGenBestFitness);
+      fitnessMonitor.Add(fitness);
+    }
+
+    for(auto& cell: curGenBestCells){
       senseMonitor.Add((double)cell->hardware.GetTrait().senseCount / (double)cfg.SEQ_REPS());
       funCallCountMonitor.Add(cell->hardware.GetTrait().funCallCount);
       funForkCountMonitor.Add(cell->hardware.GetTrait().funForkCount);
       funTotalCallMonitor.Add(cell->hardware.GetTrait().funCallCount+cell->hardware.GetTrait().funForkCount);
-      fitnessMonitor.Add((double)cell->hardware.GetTrait().fitness);
       for(size_t i = 0; i < cfg.NSEQS(); ++i){
         guessMonitors[i].Add(
           (double)cell->hardware.GetTrait().guessCount[i] / (double)cfg.SEQ_REPS()
         );
-      }
+      } 
+    }
 
+    for(auto & cell : this->pop){
       /// Reset the counts in the cell exept fitness which is done after selection.
       cell->hardware.GetTrait().funCallCount = 0;
       cell->hardware.GetTrait().funForkCount = 0;
@@ -131,5 +148,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
 
     TournamentSelect(*this, 2, this->GetNumOrgs());
     for(auto & cell : this->pop) cell->hardware.GetTrait().fitness = 0;
+
+    
   });
 }

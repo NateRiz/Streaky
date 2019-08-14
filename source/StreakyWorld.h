@@ -39,8 +39,8 @@ class StreakyWorld: public emp::World<Cell<CH>> {
     emp::DataMonitor<double> funForkCountMonitor;
     emp::DataMonitor<double> funTotalCallMonitor;
     Analytics analytics;
-
-    double bestFitness = -10;
-
+    
+    double bestFitness;
+    Cell<CH>* bestCell;
 
 };
