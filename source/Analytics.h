@@ -39,20 +39,9 @@ public:
     dfile.AddMean(fitnessMonitor, "Mean Fitness");
     dfile.AddMedian(fitnessMonitor, "Median Fitness");
     
-    dfile.AddMin(funCallCountMonitor, "Minimum Function Calls");
-    dfile.AddMax(funCallCountMonitor, "Maximum Function Calls");
     dfile.AddMean(funCallCountMonitor, "Mean Function Calls");
-    dfile.AddMedian(funCallCountMonitor, "Median Function Calls");
-    
-    dfile.AddMin(funForkCountMonitor, "Minimum Function Forks");
-    dfile.AddMax(funForkCountMonitor, "Maximum Function Forks");
     dfile.AddMean(funForkCountMonitor, "Mean Function Forks");
-    dfile.AddMedian(funForkCountMonitor, "Median Function Forks");
- 
-    dfile.AddMin(funTotalCallMonitor, "Minimum Function Calls & Forks");
-    dfile.AddMax(funTotalCallMonitor, "Maximum Function Calls & Forks");
     dfile.AddMean(funTotalCallMonitor, "Mean Function Calls & Forks");
-    dfile.AddMedian(funTotalCallMonitor, "Median Function Calls & Forks");
 
 
     for (size_t i = 0; i < guessMonitors.size(); ++i){
