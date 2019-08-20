@@ -7,4 +7,4 @@ set beacon_priority y
 set config_dir /mnt/scratch/riziknat/streaky-evolve/config
 set dest_dir /mnt/scratch/riziknat/streaky-evolve/data
 
-1001..1020 streaky-evo-roulette module purge; module load GCC/8.2.0-2.31.1; ./streaky evolve-roulette -SEED $seed -SEQ_A 0.2 -SEQ_B 0.8 -TREATMENT roulette
+1001..1020 streaky-evo-roulette module purge; module load GCC/8.2.0-2.31.1; timeout 23h ./streaky evolve-roulette -SEED $seed -SEQ_A 0.2 -SEQ_B 0.8 -TREATMENT roulette || true
