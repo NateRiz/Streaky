@@ -24,6 +24,7 @@ class StreakyWorld: public emp::World<Cell<CH>> {
     void ConfigureHardware();
     void ConfigureWorld();
     void PrintBestCell();
+    void TestCellVerbose();
 
   private:
     const Config & cfg;

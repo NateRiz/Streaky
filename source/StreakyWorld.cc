@@ -52,6 +52,14 @@ void StreakyWorld<CH>::PrintBestCell(){
 }
 
 template <typename CH>
+void StreakyWorld<CH>::TestCellVerbose(){
+    emp::vector<Sequence> tests;
+    tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(0));
+    tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(1));
+    bestCell->CacheFitness(tests, true);
+}
+
+template <typename CH>
 void StreakyWorld<CH>::CreatePopulation(const unsigned int SAMPLES){
   for (unsigned int i = 0; i < SAMPLES; ++i){
     Cell<CH> cell{cfg, inst_lib, event_lib, random, mutator};
@@ -89,11 +97,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
     tests.reserve(cfg.SEQ_REPS() * cfg.NSEQS());
     for (size_t seq = 0; seq < cfg.NSEQS(); ++seq) {
       for (size_t rep = 0; rep < cfg.SEQ_REPS(); ++rep) {
-        tests.emplace_back(
-          cfg,
-          StreakyWorld<CH>::random,
-          cfg.SEQS(seq)
-        );
+        tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(seq));
       }
     }
     emp::vector<Cell<CH>*> curGenBestCells {};
@@ -113,6 +117,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
       if (fitness > bestFitness){
         bestCell = cell;
         bestFitness = fitness;
+        this->TestCellVerbose();
         this->PrintBestCell();
         std::cout<<"New Best Fitness: "<<fitness <<std::endl;
       }

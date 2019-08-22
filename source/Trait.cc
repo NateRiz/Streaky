@@ -8,5 +8,6 @@ Trait::Trait()
   , fitness(0)
   , funCallCount(0)
   , funForkCount(0)
+  , seq(nullptr)
   , senseCount(0)
   { ; }

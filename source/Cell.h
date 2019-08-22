@@ -5,6 +5,9 @@
 #include "Config.h"
 #include "Sequence.h"
 #include "Trait.h"
+#include <fstream>
+#include <iostream>
+#include <string>
 
 template <typename CH>
 struct Cell{
@@ -47,15 +50,27 @@ public:
     hardware.SetProgram(program);
   }
 
-  int EvalSequence(Sequence & seq) {
+  int EvalSequence(Sequence & seq, bool verbose) {
     Restart();
     hardware.GetTrait().seq = &seq;
+    std::ofstream file;
 
-    for (
-      size_t t = 0;
-      t < cfg.TICKS_PER_TEST() + rand.GetInt(cfg.TICKS_NOISE()); //TODO
-      ++t
-    ) Tick();
+    if (verbose){ 
+      file.open("Verbose_" + std::to_string(seq.P()) + ".txt"); 
+      hardware.PrintState(file);
+      file << "===============================\n";
+    }
+
+    size_t cpu_cycles = cfg.TICKS_PER_TEST() + rand.GetInt(cfg.TICKS_NOISE()); //TODO
+    for ( size_t t = 0; t < cpu_cycles; ++t){
+      Tick();
+      if (verbose){
+        hardware.PrintState(file);
+        file << "===============================\n";
+      }
+    }
+
+    if (verbose){ file.close(); }
 
     const double idx_guess = hardware.GetTrait().guess;
     const double p_guess = (idx_guess == -1) ? idx_guess : cfg.SEQS(idx_guess);
@@ -63,16 +78,16 @@ public:
     return (p_guess == -1 ? p_guess : p_guess == seq.P());
   }
 
-  int EvalSequences(emp::vector<Sequence> & seqs) {
+  int EvalSequences(emp::vector<Sequence> & seqs, bool verbose) {
 
     int sum = 0;
-    for(Sequence & seq : seqs) sum += EvalSequence(seq);
+    for(Sequence & seq : seqs) sum += EvalSequence(seq, verbose);
     return sum;
 
   }
 
-  void CacheFitness(emp::vector<Sequence> & seqs) {
-    int fit = EvalSequences(seqs);
+  void CacheFitness(emp::vector<Sequence> & seqs, bool verbose = false) {
+    int fit = EvalSequences(seqs, verbose);
     hardware.GetTrait().fitness = fit;
 
     if ( fit == (int) seqs.size() ) {
@@ -86,19 +101,19 @@ public:
     typename CH::mutator_t mutator;
 
 private:
+  // Create a way for the hardware to print our traits.
+    std::function<void(std::ostream&, typename CH::TRAIT_TYPE)> trait_printer = [](
+    std::ostream& os, typename CH::TRAIT_TYPE trait
+  ){
+    os << "[P: " << trait.seq->P()
+       << " -- Guess: " << trait.guess << "]"
+       << std::endl;
+  };
+
   void ConfigureHardware(){
     hardware.SetMinBindThresh(cfg.HW_MIN_SIM_THRESH());
     hardware.SetMaxCores(cfg.HW_MAX_THREADS());
     hardware.SetMaxCallDepth(cfg.HW_MAX_CALL_DEPTH());
-
-    // Create a way for the hardware to print our traits.
-    auto trait_printer = [](
-      std::ostream& os, typename CH::TRAIT_TYPE trait
-    ){
-      os << "[SF: " << trait.seq->P()
-         << " -- G: " << trait.guess << "]"
-         << std::endl;
-    };
     hardware.SetTraitPrintFun(trait_printer);
   }
 
