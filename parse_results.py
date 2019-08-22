@@ -2,11 +2,11 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
+from keyname import keyname as kn 
 
 sns.set()
 data = pd.read_csv(sys.argv[1])
-args = {k:v for k,v in [arg.split("=") for arg in sys.argv[1].split("+")]}
-
+args = kn.unpack(sys.argv[1])
 def main():
     labels = ["Fitness","Sense Count", "Guess0 Count", "Guess1 Count"]
     means = ["Function Calls", "Function Forks", "Function Calls & Forks"]
@@ -18,14 +18,14 @@ def main():
         i+=1
         ax=fig.add_subplot(3, 3, i)
         results.append(data[[f"Minimum {label}", f"Maximum {label}", f"Mean {label}", f"Median {label}"]])
-        sns.lineplot(data=results[i], ax=ax)
+        sns.lineplot(data=results[i-1], ax=ax)
         set_labels(label)
 
     for label in means:
         i+=1
         ax=fig.add_subplot(3, 3, i)
         results.append(data[[f"Mean {label}"]])
-        sns.lineplot(data=results[i], ax=ax)
+        sns.lineplot(data=results[i-1], ax=ax)
         set_labels(label)
         
     plt.show()
