@@ -1,10 +1,13 @@
 #pragma once
+#include <iostream>
+#include <fstream>
 
 #include "hardware/EventDrivenGP.h"
 
 #include "Config.h"
 #include "InstructionLibrary.h"
 #include "StreakyWorld.h"
+
 
 template <typename CH>
 StreakyWorld<CH>::StreakyWorld(const Config & cfg_)
@@ -42,8 +45,10 @@ void StreakyWorld<CH>::Start(){
 
 template <typename CH>
 void StreakyWorld<CH>::PrintBestCell(){
-  bestCell->hardware.PrintProgram();
-  bestCell->hardware.PrintProgramFull();
+  std::ofstream file;
+  file.open("program.gp");
+  bestCell->hardware.PrintProgram(file);
+  file.close();
 }
 
 template <typename CH>
