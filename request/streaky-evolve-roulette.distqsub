@@ -1,6 +1,6 @@
 set email riziknat@msu.edu
 set freq_email Crash
-set description streaky-evo-roulette
+set description streaky-evolve-roulette
 set mem_request 12
 set walltime 160
 set beacon_priority y
