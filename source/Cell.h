@@ -62,7 +62,14 @@ public:
     }
 
     size_t cpu_cycles = cfg.TICKS_PER_TEST() + rand.GetInt(cfg.TICKS_NOISE()); //TODO
+    emp::BitSet<16> affinity;
+    const emp::vector<size_t> funcAffinities = {0, (size_t)pow(2, 16)-1}; // 000... || 111...
+
     for ( size_t t = 0; t < cpu_cycles; ++t){
+      if(!(t % cfg.CYCLES_PER_EVENT())){
+        affinity.SetUInt(0, funcAffinities[seq.Get(t / cfg.CYCLES_PER_EVENT())]);
+        hardware.TriggerEvent("NextBit", affinity);
+      }
       Tick();
       if (verbose){
         hardware.PrintState(file);

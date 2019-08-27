@@ -7,7 +7,7 @@
 #include "Analytics.h"
 #include "Cell.h"
 #include "Config.h"
-
+#include "EventLibrary.h"
 template<typename CH>
 class StreakyWorld: public emp::World<Cell<CH>> {
   public:

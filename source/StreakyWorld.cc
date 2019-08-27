@@ -23,6 +23,9 @@ StreakyWorld<CH>::StreakyWorld(const Config & cfg_)
 
   InstructionLibrary<CH> il;
   inst_lib = il.CreateInstLib(cfg, random);
+  
+  EventLibrary<CH> el;
+  event_lib = el.CreateEventLib();
 
   ConfigureWorld();
 }
