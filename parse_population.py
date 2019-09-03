@@ -2,7 +2,8 @@ import os
 import parse_results
 
 class Program:
-    def __init__(self, program, data):
+    def __init__(self, program, data, name):
+        self.name = name
         with open(program, "r") as p:
             self.program = p.readlines()
         self.instructions = {}
@@ -27,7 +28,7 @@ class Program:
         self.__repr__ = self.__str__
 
     def __str__(self):
-        return F"({self.fun_count:<2}, {len(self.program)-self.fun_count:<3}) | {self.median_fitness:<3}"
+        return F"({self.fun_count:<2}, {len(self.program)-self.fun_count:<3}) | {self.median_fitness:<3} | {self.name}"
         
 
 
@@ -48,7 +49,7 @@ def get_data():
                     data = os.path.join(data_path, path, file)
                 elif "program" in file:
                     prg = os.path.join(data_path, path, file)
-            results[treatment].append(Program(prg, data))
+            results[treatment].append(Program(prg, data, path))
     return results
 
 def filter_on(instruction, results):
