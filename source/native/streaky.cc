@@ -76,6 +76,19 @@ int main(int argc, char* argv[])
        rouletteWorld.Start();
       std::cout << "DONE." << std::endl;
 
+    } else if (res->back() == "evolve-exproulette") {
+
+      std::cout << "running mode: " << res->back() << std::endl;
+       StreakyWorld<
+         ConfigHardware<
+           emp::StreakMetric<16>,
+           emp::ExpRouletteSelector<>
+         >
+       > rouletteWorld(cfg);
+       rouletteWorld.CreatePopulation(cfg.POP_SIZE());
+       rouletteWorld.Start();
+      std::cout << "DONE." << std::endl;
+
     } else if (res->back() == "run-program") {
 
       std::cout << "running mode: " << res->back() << std::endl;
