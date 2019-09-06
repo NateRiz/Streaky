@@ -37,6 +37,10 @@ EMP_BUILD_CONFIG(
   VALUE(HW_MAX_THREADS, size_t, 16, "TODO"),
   VALUE(HW_MAX_CALL_DEPTH, size_t, 128, "TODO"),
   VALUE(HW_MIN_SIM_THRESH, double, 0.0, "TODO"),
+  VALUE(MIN_FUNC_CNT, size_t, 1, "Min number of functions"),
+  VALUE(MAX_FUNC_CNT, size_t, 16, "Max number of functions"),
+  VALUE(MIN_FUN_LEN, size_t, 1, "Min instructions per function"),
+  VALUE(MAX_FUN_LEN, size_t, 32, "Max instructions per function"),
 
   GROUP(MUTATOR, "Settings for signalgp mutator"),
   VALUE(ARG_SUB__PER_ARG, double, 0.01, "TODO"),
@@ -47,5 +51,6 @@ EMP_BUILD_CONFIG(
   VALUE(FUNC_DUP__PER_FUNC, double, 0.01, "TODO"),
   VALUE(FUNC_DEL__PER_FUNC, double, 0.01, "TODO"),
   VALUE(TAG_BIT_FLIP__PER_BIT, double, 0.01, "TODO"),
+  
 
 )

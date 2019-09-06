@@ -66,7 +66,12 @@ template <typename CH>
 void StreakyWorld<CH>::CreatePopulation(const unsigned int SAMPLES){
   for (unsigned int i = 0; i < SAMPLES; ++i){
     Cell<CH> cell{cfg, inst_lib, event_lib, random, mutator};
-    typename CH::program_t prog = emp::GenRandSignalGPProgram(random, inst_lib, 1, 16, 5, 32); //TODO make these config params
+    typename CH::program_t prog = emp::GenRandSignalGPProgram(random
+        , inst_lib
+        , cfg.MIN_FUNC_CNT()
+        , cfg.MAX_FUNC_CNT()
+        , cfg.MIN_FUN_LEN()
+        , cfg.MAX_FUN_LEN());
     cell.SetProgram(prog);
     cell.hardware.ResetHardware();
     this->Inject( cell );
