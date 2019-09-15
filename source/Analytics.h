@@ -14,6 +14,7 @@ public:
     , emp::vector<emp::DataMonitor<double, emp::data::Log>>& guessMonitors
     , emp::DataMonitor<double, emp::data::Log>& senseMonitor
     , emp::DataMonitor<double, emp::data::Log>& fitnessMonitor
+    , emp::DataMonitor<double, emp::data::Log>& sizeMonitor
     , emp::DataMonitor<double, emp::data::Log>& funCallCountMonitor
     , emp::DataMonitor<double, emp::data::Log>& funForkCountMonitor
     , emp::DataMonitor<double, emp::data::Log>& funTotalCallMonitor
@@ -38,7 +39,12 @@ public:
     dfile.AddMax(fitnessMonitor, "Maximum Fitness");
     dfile.AddMean(fitnessMonitor, "Mean Fitness");
     dfile.AddMedian(fitnessMonitor, "Median Fitness");
-    
+   
+    dfile.AddMin(sizeMonitor, "Minimum Size");
+    dfile.AddMax(sizeMonitor, "Maximum Size");
+    dfile.AddMean(sizeMonitor, "Mean Size");
+    dfile.AddMedian(sizeMonitor, "Median Size");
+
     dfile.AddMean(funCallCountMonitor, "Mean Function Calls");
     dfile.AddMean(funForkCountMonitor, "Mean Function Forks");
     dfile.AddMean(funTotalCallMonitor, "Mean Function Calls & Forks");

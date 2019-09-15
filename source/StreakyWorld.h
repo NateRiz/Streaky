@@ -36,6 +36,7 @@ class StreakyWorld: public emp::World<Cell<CH>> {
     emp::vector<emp::DataMonitor<double, emp::data::Log>> guessMonitors;
     emp::DataMonitor<double, emp::data::Log> senseMonitor;
     emp::DataMonitor<double, emp::data::Log> fitnessMonitor;
+    emp::DataMonitor<double, emp::data::Log> sizeMonitor;
     emp::DataMonitor<double, emp::data::Log> funCallCountMonitor; 
     emp::DataMonitor<double, emp::data::Log> funForkCountMonitor;
     emp::DataMonitor<double, emp::data::Log> funTotalCallMonitor;

@@ -11,7 +11,7 @@ class Graph:
         self.args = kn.unpack(csv_path)
     
     def start(self):
-        labels = ["Fitness","Sense Count", "Guess0 Count", "Guess1 Count"]
+        labels = ["Fitness","Sense Count", "Size", "Guess0 Count", "Guess1 Count"]
         means = ["Function Calls", "Function Forks", "Function Calls & Forks"]
         fig = plt.figure()
         fig.subplots_adjust(hspace=0.4, wspace=0.4)

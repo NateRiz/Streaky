@@ -14,7 +14,7 @@ StreakyWorld<CH>::StreakyWorld(const Config & cfg_)
   : cfg(cfg_)
   , random(cfg_.SEED())
   , guessMonitors(cfg.NSEQS())
-  , analytics(cfg_, guessMonitors, senseMonitor, fitnessMonitor, funCallCountMonitor, funForkCountMonitor, funTotalCallMonitor)
+  , analytics(cfg_, guessMonitors, senseMonitor, fitnessMonitor, sizeMonitor, funCallCountMonitor, funForkCountMonitor, funTotalCallMonitor)
 {
   bestFitness = -1*(double)(cfg.NSEQS()*cfg.SEQ_REPS())-1;
   bestCell = nullptr;
@@ -136,6 +136,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
 
     for(auto& cell: curGenBestCells){
       senseMonitor.Add((double)cell->hardware.GetTrait().senseCount / (double)cfg.SEQ_REPS());
+      sizeMonitor.Add((double)cell->hardware.GetProgram().GetInstCnt());
       funCallCountMonitor.Add(cell->hardware.GetTrait().funCallCount);
       funForkCountMonitor.Add(cell->hardware.GetTrait().funForkCount);
       funTotalCallMonitor.Add(cell->hardware.GetTrait().funCallCount+cell->hardware.GetTrait().funForkCount);
@@ -153,10 +154,11 @@ void StreakyWorld<CH>::ConfigureWorld(){
       cell->hardware.GetTrait().guessCount.clear();
       cell->hardware.GetTrait().senseCount = 0;
     }
-
+  
     analytics.Update();
     senseMonitor.Reset();
     fitnessMonitor.Reset();
+    sizeMonitor.Reset();
     funCallCountMonitor.Reset();
     funForkCountMonitor.Reset();
     funTotalCallMonitor.Reset();
@@ -167,6 +169,5 @@ void StreakyWorld<CH>::ConfigureWorld(){
     TournamentSelect(*this, 2, this->GetNumOrgs());
     for(auto & cell : this->pop) cell->hardware.GetTrait().fitness = 0;
 
-    
   });
 }
