@@ -10,7 +10,7 @@ EMP_BUILD_CONFIG(
   GROUP(BASE, "Experimental settings for all experiments"),
   VALUE(SEED, int, 1, "Random number seed"),
   VALUE(TREATMENT, std::string, "unspecified", "Treatment specifier"),
-  VALUE(EVENT_DRIVEN, bool, false, "Determines whether sensing is manual or event-driven."),
+  VALUE(EVENT_DRIVEN, size_t, 0, "Determines whether sensing is manual(0), event-driven(1), or both(2)."),
   VALUE(CYCLES_PER_EVENT, int, 8, "How many cycles are required before the next event triggers."),
 
   GROUP(LOGISTICS, "Logistical settings"),

@@ -66,7 +66,7 @@ public:
     const emp::vector<size_t> funcAffinities = {0, (size_t)pow(2, 16)-1}; // 000... || 111...
 
     for ( size_t t = 0; t < cpu_cycles; ++t){
-      if(!(t % cfg.CYCLES_PER_EVENT())){
+      if(cfg.EVENT_DRIVEN()>0 && !(t % cfg.CYCLES_PER_EVENT())){
         affinity.SetUInt(0, funcAffinities[seq.Get(t / cfg.CYCLES_PER_EVENT())]);
         hardware.TriggerEvent("NextBit", affinity);
       }
@@ -96,10 +96,13 @@ public:
   void CacheFitness(emp::vector<Sequence> & seqs, bool verbose = false) {
     int fit = EvalSequences(seqs, verbose);
     hardware.GetTrait().fitness = fit;
-
+  
+    //Prunes down the program to only the needed instructions
+    /*
     if ( fit == (int) seqs.size() ) {
       hardware.GetTrait().fitness += (512.0 - (double)hardware.GetProgram().GetInstCnt()) / 100.0;
     }
+    */
   }
 
 public:

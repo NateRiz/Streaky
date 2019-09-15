@@ -57,7 +57,7 @@ class InstructionLibrary{
     inst_lib.AddInst("Terminal_1", CH::hardware_t::template Inst_Terminal< std::ratio<1>, std::ratio<1> >, 1, "Writes a genetically-encoded value into Arg1");
     inst_lib.AddInst("Terminal_5", CH::hardware_t::template Inst_Terminal<std::ratio<-5,1>,std::ratio<5,1>>, 1, "Writes a genetically-encoded value into a register");
     inst_lib.AddInst("Terminal_Mil", CH::hardware_t::template Inst_Terminal<std::ratio<-1000000,1>,std::ratio<1000000,1>>, 1, "Writes a genetically-encoded value into a register");
-    if(!cfg.EVENT_DRIVEN()){
+    if(cfg.EVENT_DRIVEN()!=1){
       inst_lib.AddInst(
        "Sense",
         [&](
