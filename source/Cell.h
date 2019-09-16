@@ -54,16 +54,39 @@ public:
     Restart();
     hardware.GetTrait().seq = &seq;
     std::ofstream file;
-
+    
+    emp::BitSet<16> affinity;
+    const emp::vector<size_t> funcAffinities = {0, (size_t)pow(2, 16)-1}; // 000... || 111...
+    
     if (verbose){ 
-      file.open("Verbose_" + std::to_string(seq.P()) + ".txt"); 
+      file.open("Verbose_" + std::to_string(seq.P()) + ".txt");
+      if (cfg.EVENT_DRIVEN()){
+        for(size_t j=0; j<2; ++j){
+          std::unordered_map<int, double> funCounter;
+          affinity.SetUInt(0, funcAffinities[j]);
+          for (size_t i = 0; i < 100; ++i){
+            emp::vector<size_t> match = hardware.FindBestFuncMatch(affinity, 1, 0.5);
+            if(match.size()>0){
+              if(funCounter.find(match[0]) == funCounter.end()){ 
+                funCounter[match[0]]=0;
+              }
+              ++funCounter[match[0]];
+            }
+          }
+          emp::vector<std::pair<double, size_t>>bestMatches;
+          for(auto &[id, count] : funCounter){bestMatches.emplace_back(count, id);}
+          std::sort(bestMatches.begin(), bestMatches.end());
+          std::reverse(bestMatches.begin(), bestMatches.end());
+          file << "Event [" << affinity << "]:\n";
+          for(auto &[prob, id] : bestMatches){file << "      Fn-"<< id << ": " << prob <<"%\n";}
+        }
+      }
       hardware.PrintState(file);
       file << "===============================\n";
     }
 
     size_t cpu_cycles = cfg.TICKS_PER_TEST() + rand.GetInt(cfg.TICKS_NOISE()); //TODO
-    emp::BitSet<16> affinity;
-    const emp::vector<size_t> funcAffinities = {0, (size_t)pow(2, 16)-1}; // 000... || 111...
+    
 
     for ( size_t t = 0; t < cpu_cycles; ++t){
       if(cfg.EVENT_DRIVEN()>0 && !(t % cfg.CYCLES_PER_EVENT())){
