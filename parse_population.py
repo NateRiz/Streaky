@@ -65,8 +65,9 @@ def print_results(results, history):
     i=0
     print(F"Size: (Fx, Inst)\tHistory:")
     for i, r in enumerate(results[0]+results[1]):
-        if not i: print("==RANKED==")
+        if i == 0: print("==RANKED==")
         if i==len(results[0]): print("==ROULETTE==")
+        if i ==2*len(results[0]): print("==EXPROULETTE==")
         print(F"{i:>2}: {str(r):<24}\t{history[i] if i < len(history) else '-'}")
         i+=1
     
