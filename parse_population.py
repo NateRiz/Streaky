@@ -28,19 +28,20 @@ class Program:
         self.__repr__ = self.__str__
 
     def __str__(self):
-        return F"({self.fun_count:<2}, {len(self.program)-self.fun_count:<3}) | {self.median_fitness:<3} | {self.name}"
+        return F"({self.fun_count:<2}, {len(self.program)-self.fun_count:<3}) | {self.median_fitness:<5} | {self.name}"
         
 
 
 def get_data():
     data_path = os.path.join(os.getcwd(), "data")
-    results = [[],[]]
+    results = [[],[],[]]
     for r,d,f in os.walk(data_path):
         for path in d:
             if "streaky-evolve" not in path:
                 continue
             treatment = 0
             if "roulette" in path: treatment = 1
+            if "exp" in path: treatment = 2
             files = os.listdir(os.path.join(data_path, path))
             prg=None
             data=None
@@ -63,8 +64,8 @@ def filter_on(instruction, results):
 
 def print_results(results, history):
     i=0
-    print(F"Size: (Fx, Inst)\tHistory:")
-    for i, r in enumerate(results[0]+results[1]):
+    print(F"Id (Fxs, Insts)\tMedian\tHistory:")
+    for i, r in enumerate(results[0]+results[1]+results[2]):
         if i == 0: print("==RANKED==")
         if i==len(results[0]): print("==ROULETTE==")
         if i ==2*len(results[0]): print("==EXPROULETTE==")
