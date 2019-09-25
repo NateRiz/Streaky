@@ -12,6 +12,7 @@ EMP_BUILD_CONFIG(
   VALUE(TREATMENT, std::string, "unspecified", "Treatment specifier"),
   VALUE(EVENT_DRIVEN, size_t, 0, "Determines whether sensing is manual(0), event-driven(1), or both(2)."),
   VALUE(CYCLES_PER_EVENT, int, 8, "How many cycles are required before the next event triggers."),
+  VALUE(FAST, bool, false, "Run the experiment without keeping any verbose or analytics data."),
 
   GROUP(LOGISTICS, "Logistical settings"),
   VALUE(MAX_GENERATIONS, int, -1, "Number of generations to evaluate"),

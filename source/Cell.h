@@ -121,11 +121,10 @@ public:
     hardware.GetTrait().fitness = fit;
   
     //Prunes down the program to only the needed instructions
-    /*
     if ( fit == (int) seqs.size() ) {
       hardware.GetTrait().fitness += (512.0 - (double)hardware.GetProgram().GetInstCnt()) / 100.0;
     }
-    */
+    
   }
 
 public:
