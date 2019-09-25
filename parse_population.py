@@ -1,5 +1,8 @@
 import os
 import parse_results
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
 
 class Program:
     def __init__(self, program, data, name):
@@ -82,6 +85,7 @@ def main():
     history = []
     while 1:
         print_results(results, history)
+        graph_medians(results)
         choice = ""
         while not choice.isdigit():
             choice = input("{id} || [F]ilter {Instruction}")
@@ -103,6 +107,18 @@ def main():
         graph.start()
 
         
+def graph_medians(results):
+    medians = [list() for _ in range(len(results[0]))]
+    for i in range(len(results)):
+        for idx, r in enumerate(results[i]):
+            medians[idx].append(r.median_fitness)
+    sns.set(style="whitegrid")
+    data = pd.DataFrame(medians, columns=["Ranked", "Roulette", "Exproulette"])
+    ax = sns.barplot( data=data)
+    plt.show()
+
+
+
 
 
 
