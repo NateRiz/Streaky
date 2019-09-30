@@ -25,3 +25,5 @@ doc/_build/
 
 package-lock.json
 node_modules/
+
+data/

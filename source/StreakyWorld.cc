@@ -38,7 +38,7 @@ void StreakyWorld<CH>::Start(){
     ++gen;
     if(!(gen%50)) { std::cout << "GEN: " << gen << std::endl; }
     for (auto & cell : this->pop){
-      //cell->hardware.GetTrait().fitness = 0;
+      cell->hardware.GetTrait().fitness = 0;
     }
     this->Update();
     this->DoMutations();
