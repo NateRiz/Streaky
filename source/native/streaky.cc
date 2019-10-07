@@ -110,7 +110,10 @@ int main(int argc, char* argv[])
         Trait trait;
         hardware.SetTrait(trait);
         hardware.ResetHardware();
-        hardware.SpawnCore(0);
+        if (cfg.EVENT_DRIVEN() == 0){
+          std::cout << "Spawning Core by default" << std::endl;
+          hardware.SpawnCore(0);
+        }
         Sequence sequence(cfg, random, cfg.SEQS(i%cfg.NSEQS()));
         hardware.GetTrait().seq = &sequence;
 
