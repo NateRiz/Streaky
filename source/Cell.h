@@ -40,6 +40,16 @@ public:
     hardware.SingleProcess();
   }
 
+  void DecayRegulators() {
+    for (const auto & uid : hardware.GetMatchBin().ViewUIDs()) {
+      if (hardware.GetMatchBin().GetVal(uid)) {
+        --hardware.GetMatchBin().GetVal(uid);
+      } else {
+        hardware.GetMatchBin().SetRegulator(uid, 1.0);
+      }
+    }
+  }
+
   void PrintCurrentState(){
     hardware.PrintProgramFull();
     hardware.PrintState();
@@ -89,11 +99,24 @@ public:
 
 
     for ( size_t t = 0; t < cpu_cycles; ++t){
-      if(cfg.EVENT_DRIVEN()>0 && !(t % cfg.CYCLES_PER_EVENT())){
-        affinity.SetUInt(0, funcAffinities[seq.Get(t / cfg.CYCLES_PER_EVENT())]);
+      if(
+        cfg.EVENT_DRIVEN()
+        && t % cfg.CYCLES_PER_EVENT() == 0
+      ){
+        affinity.SetUInt(
+          0,
+          funcAffinities[seq.Get(t / cfg.CYCLES_PER_EVENT())]
+        );
         hardware.TriggerEvent("NextBit", affinity);
       }
       Tick();
+      if (
+        cfg.DECAY_REGULATORS()
+        && cfg.EVENT_DRIVEN()
+        && t % cfg.CYCLES_PER_EVENT() == 0
+      ){
+        DecayRegulators();
+      }
       if (verbose){
         hardware.PrintState(file);
         file << "===============================\n";
