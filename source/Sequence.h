@@ -35,10 +35,13 @@ public:
 
   size_t Size() const { return seq.size(); }
 
-  void Extend() { 
-    //seq.push_back(seq.back() ^ rand.P(p_switch)); 
-    seq.push_back(rand.P(p_switch));
+  void Extend() {
+    if (cfg.EASY_PROBLEM()) {
+      seq.push_back(rand.P(p_switch));
+    } else {
+      seq.push_back(seq.back() ^ rand.P(p_switch));
     }
+  }
 
   double P() const { return p_switch; }
 
