@@ -33,7 +33,9 @@ public:
     hardware.ResetHardware();
     hardware.GetTrait().guess = -1;
     hardware.GetTrait().seq = nullptr;
-    hardware.SpawnCore(0);
+    if (cfg.EVENT_DRIVEN() == 0){
+      hardware.SpawnCore(0);
+    }
   }
 
   void Tick(){
@@ -81,6 +83,7 @@ public:
           for(auto &[prob, id] : bestMatches){file << "      Fn-"<< id << ": " << prob <<"%\n";}
         }
       }
+      file <<"Tick: -1"<<"\n";
       hardware.PrintState(file);
       file << "===============================\n";
     }
@@ -89,12 +92,13 @@ public:
     
 
     for ( size_t t = 0; t < cpu_cycles; ++t){
-      if(cfg.EVENT_DRIVEN()>0 && !(t % cfg.CYCLES_PER_EVENT())){
+      if(cfg.EVENT_DRIVEN()>0 && (t % cfg.CYCLES_PER_EVENT() == 0)){
         affinity.SetUInt(0, funcAffinities[seq.Get(t / cfg.CYCLES_PER_EVENT())]);
         hardware.TriggerEvent("NextBit", affinity);
       }
       Tick();
       if (verbose){
+        file <<"Tick: "<<t<<"\n";
         hardware.PrintState(file);
         file << "===============================\n";
       }
