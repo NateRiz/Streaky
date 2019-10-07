@@ -54,11 +54,11 @@ public:
     Restart();
     hardware.GetTrait().seq = &seq;
     std::ofstream file;
-    
+
     emp::BitSet<16> affinity;
     const emp::vector<size_t> funcAffinities = {0, (size_t)pow(2, 16)-1}; // 000... || 111...
-    
-    if (verbose){ 
+
+    if (verbose){
       file.open("Verbose_" + std::to_string(seq.P()) + ".txt");
       if (cfg.EVENT_DRIVEN()){
         for(size_t j=0; j<2; ++j){
@@ -67,7 +67,7 @@ public:
           for (size_t i = 0; i < 100; ++i){
             emp::vector<size_t> match = hardware.FindBestFuncMatch(affinity, 1, 0.5);
             if(match.size()>0){
-              if(funCounter.find(match[0]) == funCounter.end()){ 
+              if(funCounter.find(match[0]) == funCounter.end()){
                 funCounter[match[0]]=0;
               }
               ++funCounter[match[0]];
@@ -86,7 +86,7 @@ public:
     }
 
     size_t cpu_cycles = cfg.TICKS_PER_TEST() + rand.GetInt(cfg.TICKS_NOISE()); //TODO
-    
+
 
     for ( size_t t = 0; t < cpu_cycles; ++t){
       if(cfg.EVENT_DRIVEN()>0 && !(t % cfg.CYCLES_PER_EVENT())){
@@ -119,12 +119,12 @@ public:
   void CacheFitness(emp::vector<Sequence> & seqs, bool verbose = false) {
     int fit = EvalSequences(seqs, verbose);
     hardware.GetTrait().fitness = fit;
-  
+
     //Prunes down the program to only the needed instructions
     if ( fit == (int) seqs.size() ) {
       hardware.GetTrait().fitness += (512.0 - (double)hardware.GetProgram().GetInstCnt()) / 100.0;
     }
-    
+
   }
 
 public:
