@@ -171,8 +171,8 @@ void StreakyWorld<CH>::ConfigureWorld(){
       cell->hardware.GetTrait().guessCount.clear();
       cell->hardware.GetTrait().senseCount = 0;
     }
-    
-    TournamentSelect(*this, 2, this->GetNumOrgs());
+
+    TournamentSelect(*this, cfg.TOURNAMENT_SIZE(), this->GetNumOrgs());
     for(auto & cell : this->pop) cell->hardware.GetTrait().fitness = 0;
 
   });
