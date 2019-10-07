@@ -54,6 +54,7 @@ class InstructionLibrary{
     void InitializeCustom(const Config & cfg, emp::Random& random){
     inst_lib.AddInst("SetRegulator", CH::hardware_t::Inst_SetRegulator, 1, "Set Matchbin Regulator to Arg1");
     inst_lib.AddInst("AdjRegulator", CH::hardware_t::Inst_AdjRegulator, 1, "Adjust Matchbin Regulator to Arg1");
+    inst_lib.AddInst("Inst_ExtRegulator", CH::hardware_t::Inst_ExtRegulator, 1, "Extend regulator duration by Arg1");
     inst_lib.AddInst("Terminal_1", CH::hardware_t::template Inst_Terminal< std::ratio<1>, std::ratio<1> >, 1, "Writes a genetically-encoded value into Arg1");
     inst_lib.AddInst("Terminal_5", CH::hardware_t::template Inst_Terminal<std::ratio<-5,1>,std::ratio<5,1>>, 1, "Writes a genetically-encoded value into a register");
     inst_lib.AddInst("Terminal_Mil", CH::hardware_t::template Inst_Terminal<std::ratio<-1000000,1>,std::ratio<1000000,1>>, 1, "Writes a genetically-encoded value into a register");
