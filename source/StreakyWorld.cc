@@ -50,6 +50,7 @@ void StreakyWorld<CH>::Start(){
 template <typename CH>
 void StreakyWorld<CH>::PrintBestCell(){
   std::ofstream file;
+  /// Write the best program to the output file
   file.open("program.gp");
   bestCell->hardware.PrintProgram(file);
   file.close();
@@ -57,14 +58,19 @@ void StreakyWorld<CH>::PrintBestCell(){
 
 template <typename CH>
 void StreakyWorld<CH>::TestCellVerbose(){
-    emp::vector<Sequence> tests;
-    tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(0));
-    tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(1));
-    bestCell->CacheFitness(tests, true);
+  /// Run two tests on a single cell and write the state after each
+  /// tick() to an output file.
+  emp::vector<Sequence> tests;
+  tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(0));
+  tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(1));
+  bestCell->CacheFitness(tests, true);
 }
 
 template <typename CH>
 void StreakyWorld<CH>::CreatePopulation(const unsigned int SAMPLES){
+  /// Create an initial population and generate random programs for each
+  /// in compliance with the config args.
+  /// Inject it into the world.
   for (unsigned int i = 0; i < SAMPLES; ++i){
     Cell<CH> cell{cfg, inst_lib, event_lib, random, mutator};
     typename CH::program_t prog = emp::GenRandSignalGPProgram(random
@@ -83,11 +89,13 @@ template <typename CH>
 void StreakyWorld<CH>::ConfigureWorld(){
 
   this->SetFitFun([&](const Cell<CH>& cell)->double{
+      /// The fitness fx is a getter for the cached fitness in the cell
       return cell.hardware.GetTrait().fitness;
   });
 
   mutator.ResetMutators();
-  // Setup other SignalGP functions.
+  /// Set up mutator config options and
+  /// assign world's mutator function
   mutator.ARG_SUB__PER_ARG(cfg.ARG_SUB__PER_ARG());
   mutator.INST_SUB__PER_INST(cfg.INST_SUB__PER_INST());
   mutator.INST_INS__PER_INST(cfg.INST_INS__PER_INST());
@@ -102,6 +110,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
   });
 
   this->OnUpdate([&](size_t update)->void{
+    /// Create {# tests}*{test types} different tests that will be given to each cell
     emp::vector<Sequence> tests;
     tests.reserve(cfg.SEQ_REPS() * cfg.NSEQS());
     for (size_t seq = 0; seq < cfg.NSEQS(); ++seq) {
@@ -109,13 +118,19 @@ void StreakyWorld<CH>::ConfigureWorld(){
         tests.emplace_back(cfg, StreakyWorld<CH>::random, cfg.SEQS(seq));
       }
     }
+
+    /// We want the best cell relative to each generation
+    /// in order to monitor its fitness
+    /// If the fitness beats our absolute best we run it thru verbose tests.
     emp::vector<Cell<CH>*> curGenBestCells {};
+    //Impossibly low fitness to achieve as default
     double curGenBestFitness = -1*(double)(cfg.SEQ_REPS() * cfg.NSEQS()) - 1;
     curGenBestCells.push_back(this->pop[0]);
     for(auto & cell : this->pop) {
       cell->CacheFitness(tests);
       double fitness = cell->hardware.GetTrait().fitness;
       
+      /// Keep track of multiple cells that share a best fitness
       if (abs(fitness - curGenBestFitness) < cfg.EPSILON()){
         curGenBestCells.push_back(cell);
       }
@@ -123,6 +138,8 @@ void StreakyWorld<CH>::ConfigureWorld(){
         curGenBestCells.resize(1);
         curGenBestCells[0] = cell;  
       }
+
+      /// Check if theres a new best cell and verbose test it.
       if (fitness > bestFitness){
         bestCell = cell;
         bestFitness = fitness;
@@ -137,7 +154,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
       fitnessMonitor.Add(fitness);
     }
 
-
+    /// Update all our monitors once per gen unless FAST
     if(!cfg.FAST()){
       for(auto& cell: curGenBestCells){
         senseMonitor.Add((double)cell->hardware.GetTrait().senseCount / (double)cfg.SEQ_REPS());
@@ -152,6 +169,7 @@ void StreakyWorld<CH>::ConfigureWorld(){
         } 
       }
 
+      /// After we update, reset because as we care about a per-generation monitor.
       analytics.Update();
       senseMonitor.Reset();
       fitnessMonitor.Reset();
