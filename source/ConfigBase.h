@@ -31,6 +31,7 @@ EMP_BUILD_CONFIG(
 
   GROUP(FITNESS, "Fitness evaluation settings"),
   VALUE(SEQ_REPS, size_t, 50, "Number of tests of each seq per evaluation"),
+  VALUE(EASY_PROBLEM, bool, true, "Should we evaluate the easy or hard problem?"),
   VALUE(TICKS_PER_TEST, size_t, 750, "Number of hardware ticks per test"),
   VALUE(TICKS_NOISE, size_t, 30, "Noise added to hardware ticks per test"),
   VALUE(SEQ_A, double, 0.0, "Streaky factor A"),
