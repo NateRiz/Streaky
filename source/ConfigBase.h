@@ -13,10 +13,12 @@ EMP_BUILD_CONFIG(
   VALUE(EVENT_DRIVEN, size_t, 0, "Determines whether sensing is manual(0), event-driven(1), or both(2)."),
   VALUE(CYCLES_PER_EVENT, int, 8, "How many cycles are required before the next event triggers."),
   VALUE(FAST, bool, false, "Run the experiment without keeping any verbose or analytics data."),
+  VALUE(DECAY_REGULATORS, bool, true, "Automatically decay SignalGP regulators over time."),
 
   GROUP(LOGISTICS, "Logistical settings"),
   VALUE(MAX_GENERATIONS, int, -1, "Number of generations to evaluate"),
   VALUE(POP_SIZE, size_t, 1000, "Number of individuals in the population"),
+  VALUE(TOURNAMENT_SIZE, size_t, 7, "Number of individuals in a tournament"),
   VALUE(CONFIG_FILENAME, std::string, "configs.cfg", "Default config filename"),
   VALUE(PROGRAM_FILENAME, std::string, "program.txt", "Default program filename"),
 
