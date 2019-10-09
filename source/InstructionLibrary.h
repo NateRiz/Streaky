@@ -51,6 +51,7 @@ class InstructionLibrary{
     inst_lib.AddInst("Nop", CH::hardware_t::Inst_Nop, 0, "No operation.");
     }
 
+    /// Custom Constructions not already in SignalGP
     void InitializeCustom(const Config & cfg, emp::Random& random){
     inst_lib.AddInst("SetRegulator", CH::hardware_t::Inst_SetRegulator, 1, "Set Matchbin Regulator to Arg1");
     inst_lib.AddInst("AdjRegulator", CH::hardware_t::Inst_AdjRegulator, 1, "Adjust Matchbin Regulator to Arg1");
