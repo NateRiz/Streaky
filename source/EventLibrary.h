@@ -8,6 +8,11 @@
 
 #include "ConfigHardware.h"
 
+/// Used for EventDriven tests instead of polling with the Sense instruction.
+/// CMD line args -EVENT_DRIVEN [0-2]
+/// 0 - Polling
+/// 1 - Events
+/// 2 - Polling and Events
 template<typename CH>
 class EventLibrary{
 public:
@@ -32,10 +37,8 @@ public:
     
     );
 
-
     return event_lib;
   }
-  
   
 
 private:

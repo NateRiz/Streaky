@@ -15,7 +15,6 @@ class StreakyWorld: public emp::World<Cell<CH>> {
     StreakyWorld(const Config & cfg);
     void Restart();
     void Tick();
-    void PrintCurrentState();
     void CreatePopulation(const unsigned int SAMPLES);
     void Start();
     double GetFitness(Cell<CH>& cell);

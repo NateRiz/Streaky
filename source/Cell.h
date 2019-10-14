@@ -29,6 +29,8 @@ public:
     ConfigureHardware();
   }
 
+  /// Reset a cell for the beginning of another test. (Not fitness)
+  /// Spawns a core in the hardware if this isn't an event driven test.
   void Restart(){
     hardware.ResetHardware();
     hardware.GetTrait().guess = -1;
@@ -38,10 +40,13 @@ public:
     }
   }
 
+
+  /// Run a single CPU intruction in the hardware on each core.
   void Tick(){
     hardware.SingleProcess();
   }
 
+  /// Decays once every event to ensure set/adj_regs instructions are being used.                                         
   void DecayRegulators() {
     for (const auto & uid : hardware.GetMatchBin().ViewUIDs()) {
       if (hardware.GetMatchBin().GetVal(uid)) {
@@ -51,16 +56,12 @@ public:
       }
     }
   }
-
-  void PrintCurrentState(){
-    hardware.PrintProgramFull();
-    hardware.PrintState();
-    std::cout <<"\n\n";
-  }
+  
 
   void SetProgram(typename CH::program_t program){
     hardware.SetProgram(program);
   }
+
 
   int EvalSequence(Sequence & seq, bool verbose) {
     Restart();
