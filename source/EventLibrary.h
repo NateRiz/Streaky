@@ -26,6 +26,9 @@ public:
   event_lib_t& CreateEventLib(){
     event_lib.AddEvent("NextBit",
       [](hardware_t& hw, const event_t& event){
+        size_t max_cores = hw.GetMaxCores();
+        hw.SetMaxCores(hw.GetMaxCores()-1);
+        hw.SetMaxCores(max_cores);
         hw.SpawnCore(event.affinity, 1.0);
       }
     );

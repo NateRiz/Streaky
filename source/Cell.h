@@ -145,7 +145,15 @@ public:
     //Prunes down the program to only the needed instructions
     if ( fit == (int) seqs.size() ) {
       hardware.GetTrait().fitness += (512.0 - (double)hardware.GetProgram().GetInstCnt()) / 100.0;
+      for(unsigned int i = 0; i < hardware.GetProgram().GetSize(); ++i){
+        for(unsigned int j = 0; j < hardware.GetProgram()[i].GetSize(); ++j){
+          if(hardware.GetProgram().GetInstLib()->GetName(hardware.GetProgram()[i][j].id) == "Nop"){
+           hardware.GetTrait().fitness += 0.0001;
+          }
+       }
+      }
     }
+    
 
   }
 
