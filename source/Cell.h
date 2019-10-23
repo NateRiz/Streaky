@@ -48,11 +48,21 @@ public:
 
   /// Decays once every event to ensure set/adj_regs instructions are being used.                                         
   void DecayRegulators() {
-    for (const auto & uid : hardware.GetMatchBin().ViewUIDs()) {
-      if (hardware.GetMatchBin().GetVal(uid)) {
-        --hardware.GetMatchBin().GetVal(uid);
-      } else {
-        hardware.GetMatchBin().SetRegulator(uid, 1.0);
+    if(cfg.DECAY_TEST() == "COUNTDOWN"){
+      for (const auto & uid : hardware.GetMatchBin().ViewUIDs()) {
+        if (hardware.GetMatchBin().GetVal(uid)) {
+          --hardware.GetMatchBin().GetVal(uid);
+        } else {
+          hardware.GetMatchBin().SetRegulator(uid, 1.0);
+        }
+      }
+    }
+    else if(cfg.DECAY_TEST() == "FRACTION"){
+      const double decayRate = 0.2;
+      for (const auto & uid : hardware.GetMatchBin().ViewUIDs()){
+        double newRegulator = hardware.GetMatchBin().ViewRegulator(uid);
+        newRegulator -= ((hardware.GetMatchBin().ViewRegulator(uid) - 1.0) * decayRate);
+        hardware.GetMatchBin().SetRegulator(uid, newRegulator);
       }
     }
   }
@@ -109,7 +119,7 @@ public:
       }
       Tick();
       if (
-        cfg.DECAY_REGULATORS()
+        cfg.DECAY_TEST() != "NO_DECAY"
         && cfg.EVENT_DRIVEN()
         && t % cfg.CYCLES_PER_EVENT() == 0
       ){

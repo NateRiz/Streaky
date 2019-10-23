@@ -13,7 +13,7 @@ EMP_BUILD_CONFIG(
   VALUE(EVENT_DRIVEN, size_t, 0, "Determines whether sensing is manual(0), event-driven(1), or both(2)."),
   VALUE(CYCLES_PER_EVENT, int, 8, "How many cycles are required before the next event triggers."),
   VALUE(FAST, bool, false, "Run the experiment without keeping any verbose or analytics data."),
-  VALUE(DECAY_REGULATORS, bool, true, "Automatically decay SignalGP regulators over time."),
+  VALUE(DECAY_TEST, std::string, "NO_DECAY", "Type of decay test we're using."),
 
   GROUP(LOGISTICS, "Logistical settings"),
   VALUE(MAX_GENERATIONS, int, -1, "Number of generations to evaluate"),
